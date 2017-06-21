@@ -506,7 +506,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [IMG_HE]: ./assets/img/hybrid_execution.png
 [IMG_ARCH]: ./assets/img/architecture.png
 [IMG_DG_LOGIC]: ./assets/img/dg_logic.png
-[DG_SQL]: https://path_to_sql_loading_script
+[DG_SQL]: ./src/sql/configure-database.ps1
 [DG_LINK]: https://path_to_dg_on_github
 [DV_GH]: https://github.com/Azure/cortana-intelligence-data-virtualization-techniques-using-sql-server-2016-and-hdinsight
 [SCRIPT_ETL]: https://path_to_etl_script

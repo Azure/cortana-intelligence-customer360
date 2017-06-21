@@ -1,0 +1,3 @@
+CREATE DATABASE SCOPED CREDENTIAL BlobStorageCredential WITH 
+  Identity = '$(CREDENTIAL_IDENTITY)',
+  Secret = '$(CREDENTIAL_SECRET)';
