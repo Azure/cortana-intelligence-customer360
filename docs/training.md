@@ -5,7 +5,7 @@
 - [Technique](#technique)
     * [1. Ingest Data and Create Data Summaries ](#1-ingest-data-and-create-data-summaries)
     * [2. Build and Evaluate Model](#2-build-and-evaluate-model)
-    * [3. Deploy Mode](#3-deploy-model)
+    * [3. Deploy Model](#3-deploy-model)
 - [ML Summary](#ml-summary)
 
 
