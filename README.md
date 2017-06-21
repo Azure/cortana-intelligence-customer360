@@ -511,8 +511,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [DV_GH]: https://github.com/Azure/cortana-intelligence-data-virtualization-techniques-using-sql-server-2016-and-hdinsight
 [SCRIPT_ETL]: https://path_to_etl_script
 [SCRIPT_SCORING]: https://path_to_scoring_script
-[TUT_TRAIN]: ./training.md
-[TUT_DEPLOY]: ./deployment.md
+[TUT_TRAIN]: ./docs/training.md
+[TUT_DEPLOY]: ./docs/deployment.md
 [TUT_SCALE_ASA]: https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-scale-jobs
 [TUT_SCALE_ASA_ML]: https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-scale-with-machine-learning-functions
 [ML_Algo_Link]: http://blog.revolutionanalytics.com/2015/03/a-first-look-at-rxbtrees.html
