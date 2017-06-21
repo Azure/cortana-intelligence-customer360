@@ -507,10 +507,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [IMG_ARCH]: ./assets/img/architecture.png
 [IMG_DG_LOGIC]: ./assets/img/dg_logic.png
 [DG_SQL]: ./src/sql/configure-database.ps1
-[DG_LINK]: https://path_to_dg_on_github
+[DG_LINK]: ./src/Python/retail360DG.py
 [DV_GH]: https://github.com/Azure/cortana-intelligence-data-virtualization-techniques-using-sql-server-2016-and-hdinsight
-[SCRIPT_ETL]: https://path_to_etl_script
-[SCRIPT_SCORING]: https://path_to_scoring_script
+[SCRIPT_ETL]: ./src/Python/etl_and_feature_engineering.py
+[SCRIPT_SCORING]: ./src/R/Scoring.R
 [TUT_TRAIN]: ./docs/training.md
 [TUT_DEPLOY]: ./docs/deployment.md
 [TUT_SCALE_ASA]: https://docs.microsoft.com/en-us/azure/stream-analytics/stream-analytics-scale-jobs
