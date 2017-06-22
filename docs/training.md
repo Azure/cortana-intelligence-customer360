@@ -3,9 +3,9 @@
 - [Pre-requisites](#pre-requisites)
 - [Description of Scripts](#description-of-scripts)
 - [Technique](#technique)
-    * [Ingest Data and Create Data Summaries ](#ingest-data-and-create-data-summaries)
-    * [Build and Evaluate Model](#build-and-evaluate-model)
-    * [Deploy Mode](#deploy-model)
+    * [1. Ingest Data and Create Data Summaries ](#1-ingest-data-and-create-data-summaries)
+    * [2. Build and Evaluate Model](#2-build-and-evaluate-model)
+    * [3. Deploy Model](#3-deploy-model)
 - [ML Summary](#ml-summary)
 
 
@@ -24,7 +24,7 @@ Once development environment setup is complete, you will run three (3) R scripts
 * Deploy the trained model.  
 
 ## Sample Dataset
-- [Customer_profile_label.csv][SCRIPT_CP_LABEL]  
+- [Customer_profile_label.csv][LINK_CLEANDATA]  
 
 ## Description of Scripts
 1. [data_ingest_blob.R][SCRIPT_INGEST] – Ingests the dataset from an external blob to the MRS edge node and creates data summaries. 
@@ -247,8 +247,7 @@ Once the initial training of the model is complete, only the model based web ser
 
 <!--  Links -->
 [LINK_MRS]: https://azure.microsoft.com/en-us/services/hdinsight/r-server/
-[LINK_CLEANDATA]: https://path_to_cleansed_data
-[SCRIPT_CP_LABEL]: https://path_to_customer_profile_label
-[SCRIPT_INGEST]: https://path_to_ingest_script
-[SCRIPT_MODEL]: https://path_to_model_script
-[SCRIPT_DEPLOY]: https://path_to_deploy_script
+[LINK_CLEANDATA]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/data/customer_profile_label.csv
+[SCRIPT_INGEST]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_ingest_blob.R
+[SCRIPT_MODEL]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_model_blob.R
+[SCRIPT_DEPLOY]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_deploy_blob.R
