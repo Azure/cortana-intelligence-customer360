@@ -449,7 +449,7 @@ Use **Power BI** to gain powerful business insights by adding visualizations to 
 2.	**Update the data source of the Power BI file**.
     - Make sure you have the latest version of Power BI desktop installed.
 
-    - Download the Power BI template for the solution and open it with Power BI Desktop.
+    - Download the [Power BI template][LINK_PBIX_FILE] for the solution and open it with Power BI Desktop.
 
     - The initial visualizations are based on sample data. 
     > **Note:** If you see any error messages, please make sure you have the latest version of Power BI Desktop installed.
@@ -526,5 +526,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [LINK_PUB_PBI_ONLINE]: https://support.powerbi.com/knowledgebase/articles/461278-publish-from-power-bi-desktop
 [LINK_REFRESH_PBI]: https://powerbi.microsoft.com/documentation/powerbi-refresh-data/
 [LINK_STORAGE_EXPLORER]: http://www.storageexplorer.com
+[LINK_PBIX_FILE]: ./assets/pbi/r360_PBI.pbix
 [VID_EH_SCALE]: https://channel9.msdn.com/Shows/Azure-Friday/Scaling-out-Azure-Service-Bus-Event-Hubs-102-with-Dan-Rosanova
 
