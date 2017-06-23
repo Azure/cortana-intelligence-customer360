@@ -148,6 +148,6 @@ Azure Storage (HDFS compatible storage) will be the backing storage for the HDIn
     
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
-[LINK_SCRIPTS]: https://path_to_scripts_directory
-[LINK_GH]: https://path_to_github 
+[LINK_SCRIPTS]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/tree/master/src
+[LINK_GH]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution 
  
