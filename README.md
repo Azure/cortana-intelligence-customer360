@@ -21,7 +21,7 @@
 - [Solution Setup](#solution-setup)  
 - [Usage](#usage)
 	* [1. Data Generation](#1-data-generation)
-	* [2. Data Cleaning, Feature Engineering and ETL](#2-data-cleaning,-feature-engineering-and-etl)
+	* [2. Data Cleaning, Feature Engineering and ETL](#2-data-cleaning-feature-engineering-and-etl)
 	* [3. Profile Scoring and Enrichment](#3-profile-scoring-and-enrichment)
 	* [4. Final Results](#4-final-results)
 - [Scaling](#scaling)
