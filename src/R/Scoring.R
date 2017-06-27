@@ -126,12 +126,10 @@ localUpdatedCustomerProfileFile <- paste(getwd(), '/', fileName, sep = '')
 # There is no need to save the column name i.e. this is output to a polybase external table
 write.table(updated_DF, file = localUpdatedCustomerProfileFile, row.names = FALSE, append = TRUE, col.names = FALSE, sep = ",")  
 
-# Make the output directory. if exist will with 'File exists' quietly
+# Clean up final and backup files if they exist. One file should only exist per time slice
 backUpFolder = paste(timeSliceDirectory, 'Scored_Result', sep = '/')
-rxHadoopMakeDir(outputFilePath)
-rxHadoopMakeDir(backUpFolder)
 
-# Remove Final Scored file if already exists. One file should exist for one time slice
+# Remove Final Scored file if already exists.
 finalOutputFile = paste(outputFilePath, outputFileName, sep = '/')
 isFileExist = rxHadoopFileExists(finalOutputFile)
 if (isFileExist) {
@@ -144,6 +142,11 @@ isBackUpFileExists = rxHadoopFileExists(backupOutputFile)
 if (isBackUpFileExists) {
   rxHadoopRemove(backupOutputFile)
 }
+
+# Ensure the output/backup directories if they don't already exist. 
+# Fails quietly even if the directory exist
+rxHadoopMakeDir(outputFilePath)
+rxHadoopMakeDir(backUpFolder)
 
 rxHadoopCopyFromLocal(localUpdatedCustomerProfileFile, finalOutputFile) 
 rxHadoopCopyFromLocal(localUpdatedCustomerProfileFile, backupOutputFile)
