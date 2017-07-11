@@ -3,7 +3,7 @@
 # About this repository
 * Maintainer: Emmanuel Awa (emmanuel.awa@microsoft.com)
 * Project: Customer 360 Profile (Solution How-to Guide)
-* Use case: Enabling Machine Learning to enrich customer profiles.. In this solution, we provide a model that uses enriched customer profiles to predict which product category a given customer is likely to purchase from. The model is trained using scaled out Gradient Boosted Machine (GBM) algorithm and runs on a Microsoft R Server. The model is trained using historic purchases, demographics, and customers’ browsing behavior data.    
+* Use case: Enabling machine learning to enrich customer profiles. In this solution, we provide a model that uses enriched customer profiles to predict which product category a given customer is likely to purchase from. The model is trained using scaled out Gradient Boosted Machine (GBM) algorithm and runs on a Microsoft R Server. The model is trained using historic purchases, demographics, and customers’ browsing behavior data.    
 
 ## Table of Contents
 - [Scope](#scope)
@@ -49,29 +49,31 @@ This technical guide walks you through the steps to implement a customer 360 pro
 To deploy this solution you will need an active [Azure](portal.azure.com) subscription. In this solution, we will implement a number of Azure services described in the [Solution Setup](#solution-setup) section of this document.
 
 ### Tools and Azure Services
-This solution includes a detailed guidance on architectural best practices and recommended big data tools and services. These tools and services are used to build a customer profile enrichment solution on Azure. This solution uses managed services on Azure namely, **Microsoft R Server, Azure Data Warehouse, Azure HDInsight Cluster, Azure Storage Blob, Azure EventHub, Azure Stream Analytics, Azure Data Factory, Azure Functions, and PowerBI**. It also uses industry standard open source tools commonly used by data scientists and engineers: **Python, SparkSQL/PySpark, and Scalable R**.
+This solution includes detailed guidance on architectural best practices and recommended big data tools and services. These tools and services are used to build a customer profile enrichment solution on Azure. This solution uses managed services on Azure, namely **Microsoft R Server, Azure Data Warehouse, Azure HDInsight Cluster, Azure Storage Blob, Azure EventHub, Azure Stream Analytics, Azure Data Factory, Azure Functions, and PowerBI**. It also uses industry standard open source tools commonly used by data scientists and engineers: **Python, SparkSQL/PySpark, and Scalable R**.
 
 These tools and services make this solution easily adoptable by the IT department of any business.
 
 # Customer 360 Profile
 ### 1. Definition and Benefits 
-To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 Profile comes in. 
+To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where the Customer 360 Profile comes in. 
 
 Customer 360 Profile is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
 
 Customer profile enrichment can be applied across multiple business use cases:
 
-1.	Design targeted sales events.
+1.	Design targeted sales events
 	
-2.	Personalize promotions and offers
+2.	Personalize promotions, offers and marketing communications
 	
 3.	Proactively reduce customer churn
 	
 4.	Predict customer buying behavior 
 	
-5.	Forecast demands for better pricing and inventory
+5.	Identify demand for better pricing and inventory
 
 6.	Gain actionable insights for better sales and opportunity leads
+
+7.  Inform product recommendation algorithms on sales websites
 
 Some of the benefits of customer profile enrichment includes:
 * A 360-degree representation of the customer. 
@@ -79,11 +81,11 @@ Some of the benefits of customer profile enrichment includes:
 * Allows you to locate, understand and better connect to your ideal customers. 
 
 ### What is under the hood
-Today businesses amass customer data through various channels, such as web browse patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
+Today businesses amass customer data through various channels, such as web browsing patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as public domain, partners, manufacturers and so on. 
 
 In many cases, only basic customer information can be derived from first party data, while other valuable data remains embedded in different locations and schemas.  
 
-Traditionally most businesses leverage only a small set of this data. However, to boost ROI with enriched customer profile, you need to integrate relevant data from all sources, perform distributed ETL (Extract, Transform, Load) across data processing engines, and use predictive analytics and machine learning to enrich customer information. 
+Traditionally most businesses leverage only a small set of this data. However, to boost ROI with enriched customer profiles, you need to integrate relevant data from all sources, perform distributed ETL (Extract, Transform, Load) across data processing engines, and use predictive analytics and machine learning to enrich customer information. 
 
 An effective profile enrichment ML model must have access to large datasets even though those datasets are geographically dispersed and schematically heterogenous. Often, these data systems are resource constrained as these are used by multiple main-stream applications and processes simultaneously.
 
@@ -107,9 +109,9 @@ Cross system query execution described in this guide provide ways to minimize da
 
 In figure 1, the end to end pipeline is based on a hypothetical scenario that represents a retail company.
 
-Customers are assumed to browse through three online product categories, namely, Technology, Apparel and Cosmetics. 
+Customers are assumed to browse through three online product categories, namely Technology, Apparel and Cosmetics. 
 
-These categories and timestamp of simulated user actions are generated and streamed to the EventHub. 
+These categories and the timestamp of simulated user actions are generated and streamed to the EventHub. 
 
 Aggregation of total time spent on each category is done by Azure Stream Analytics and the aggregated data is then stored in Azure Storage blobs.
 
@@ -127,7 +129,7 @@ The feature engineering and ETL process relies heavily on accessing referential 
 
 Again, structured datasets (e.g. customer demographics and historic purchases) in Azure SQL Data Warehouse need to be joined with NoSQL streaming data on Azure storage blob.
 
-**Cross System Query Execution**, uses **JDBC**, which allows the push of query to the SQL DW to access the views of the necessary referential data for ETL.
+**Cross System Query Execution**, uses **JDBC**, which allows queries to be pushed to the SQL DW to access the views of the necessary referential data for ETL.
 
 
 ![Cross System Query Execution][IMG_HE]
@@ -138,7 +140,7 @@ Again, structured datasets (e.g. customer demographics and historic purchases) i
 > Refer to this tutorial for details on [Cross System Query Execution][DV_GH]. 
 
 ### 2. Machine Learning
-The multi-class classifier Machine Learning model is built using an HDInsight cluster with Microsoft R Server (MRS) at scale. The power of R is leveraged using the MRS `rxBTrees` algorithm. `rxBTrees` scales the Gradient Boosting Machine (`gbm()`) that solves classification and regression problems. Its implementation is built upon `rxDTree`. It combines weak learners in an additive and iterative manner to produce accurate classifiers that are resistant to overfitting.  
+The multi-class classifier machine learning model is built using an HDInsight cluster with Microsoft R Server (MRS) at scale. The power of R is leveraged using the MRS `rxBTrees` algorithm. `rxBTrees` scales the Gradient Boosting Machine (`gbm()`) that solves classification and regression problems. Its implementation is built upon `rxDTree`. It combines weak learners in an additive and iterative manner to produce accurate classifiers that are resistant to overfitting.  
 
 > Learn more about [rxBTress][ML_Algo_Link]  and [Microsoft R Server][LINK_RServer].  
 
@@ -154,10 +156,10 @@ Activities in ADF **(Azure Data Factory)** parlance are triggered at predefined 
 ### 4. ML Model Training
 A predictive multi-class classifier is trained using rxBTrees. It enriches the existing profile for targeted insights and engagements, like personalized offers or targeted campaigns, via labels.
 
-Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, ** a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
+Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, **a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
 
 
-A short tutorial on how the model is trained can be found [here][TUT_TRAIN]
+A short tutorial on how the model is trained can be found [here][TUT_TRAIN].
 
 # Solution Setup
 If you have deployed the solution from the Cortana Intelligence gallery, you should have created the following resources in your Azure subscription. 
@@ -236,7 +238,7 @@ The [Python Data Generator][DG_LINK] synthesizes data based on the following hyp
 
 **Figure 3: Graphical representation of the Data generation logic - user browsing data**
 
-The green boxes represent the actual buyers used to generate the **Purchase** table. At the end of data generation, the customer browsing data is then streamed through Azure EventHub to Azure Stream Analytics for aggregation. Total customers browsing times are calculated and saved to Azure Storage blob for archival and further processing. 
+The green boxes represent the actual buyers used to generate the **Purchase** table. At the end of data generation, the customer browsing data is then streamed through Azure EventHub to Azure Stream Analytics for aggregation. Total customers browsing times are calculated and saved to Azure Storage blob for archiving and further processing. 
 
 
 	
@@ -331,7 +333,7 @@ Customer activities in the past 3, 10 and 30 days are used to enrich already exi
 
 ### 3. Profile Scoring and Enrichment
 > **NOTE** 
-> To explore how the Machine Learning model was trained, follow [this][TUT_TRAIN] tutorial.  
+> To explore how the machine learning model was trained, follow [this][TUT_TRAIN] tutorial.  
 
 First the pre-trained model is loaded from blob into R Server's local context.  
 ```R
@@ -385,7 +387,7 @@ write.table(enriched_profile_xdf, file = localUpdatedCustomerProfileFile, row.na
 
 ```
 
-For scalability, the scoring code must be parallel, modular and reuseable. The multi-class classification is invoked in batch mode using **RevoScale R** `Revo64 CM BATCH` Command. ADF orchestrates this parallel scoring using a MapReduce Activity on the HDInsight cluster. The following is the a sample command. 
+For scalability, the scoring code must be parallel, modular and reuseable. The multi-class classification is invoked in batch mode using **RevoScale R** `Revo64 CM BATCH` Command. ADF orchestrates this parallel scoring using a MapReduce Activity on the HDInsight cluster. The following is a sample command. 
 
 ```Bash
 Revo64 CMD BATCH "--args <location_of_classifier_on_wasb> <path_to_data_slice> <name_of_output_file> <name_of_ouput_file>" <name_of_R_scoring_script> /dev/stdout
@@ -394,7 +396,7 @@ Revo64 CMD BATCH "--args <location_of_classifier_on_wasb> <path_to_data_slice> <
 > Following link for complete [Scoring.R][SCRIPT_SCORING] script
 
 ### 4. Final Results
-The Azure Stream Analytics continuously aggregates the stream of user activity data sent to the EventHub by the data simulator.  And for each ADF time slice (15 minutes), the aggregated data from ASA are piped to the ETL process and then classified using the pre-trained model (both running on an HDInsight cluster). The final enriched profiles are written out to a csv file that maps to an external table on Azure SQL Data Warehouse. For each orchestrated time slice, the Azure SQL DW table refreshes with new enriched customer profiles that reflect their most recent activities. Interactive visualizations, using PowerBI, can be extracted from the Azure SQL DW table to gain a deeper understanding of the customer. 
+The Azure Stream Analytics continuously aggregates the stream of user activity data sent to the EventHub by the data simulator. For each ADF time slice (15 minutes), the aggregated data from ASA are piped to the ETL process and then classified using the pre-trained model (both running on an HDInsight cluster). The final enriched profiles are written out to a csv file that maps to an external table on Azure SQL Data Warehouse. For each orchestrated time slice, the Azure SQL DW table refreshes with new enriched customer profiles that reflect their most recent activities. Interactive visualizations, using PowerBI, can be extracted from the Azure SQL DW table to gain a deeper understanding of the customer. 
 
 # Scaling
 For a cost effective demonstration (i.e. end to end operation) of this solution, the data generator has been downscaled to produce approximately **7500 messages** every **15 minutes** to fit an ADF time slice. However, the batch size of the data generator can easily be tuned to scale up to **100 messages per second**. The data generator batches events to EventHub and the batch size can be scaled up to even larger numbers. Each component in the architecture supports a separate level of scale. Each service can be scaled **up** to support a higher throughput or scaled **out** to spread throughput across multiple services. We observed a linear relationship between the number of EventHub Throughput Units and Azure Stream Analytics Stream Unit (SU). The numbers in the table below are specifically for this solution and do not reflect service limits of the individual Azure services used in this solution. The sub-sections below go into details about the scaling and limitations of the individual Azure services.
@@ -426,7 +428,7 @@ This [blog][LINK_EH_SCALE] describes EventHub scaling in detail. If you interact
 > Follow this [video][VID_EH_SCALE] for a detailed tutorial on scaling EventHub.
 
 ### 2. Azure Stream Analytics (ASA)
-Azure Stream Analytics jobs are building blocks for increasing stream data processing throughput. An analytic job includes **inputs, query, and output**. Analytic computing power is controlled by **Streaming Units (SU)**. Each streaming unit is approximately 1MB/second of throughput. Performance of the job depends on the number of **SU**, partition configuration of the inputes and the query of the job. ASA scales best if the data is **perfectly partitionable and embarrasingly parallel**. This [tutorial][TUT_SCALE_ASA] describes more about ASA scaling fpr throughput. The end goal of a predictive pipeline is Machine Learning (ML). ASA requires special attention when scaling for Machine Learning functions and jobs. This [tutorial][TUT_SCALE_ASA_ML] discusses the best practices on how to achieve ASA ML scaling. Pricing details for **Standard SU** can be found below.  
+Azure Stream Analytics jobs are building blocks for increasing stream data processing throughput. An analytic job includes **inputs, query, and output**. Analytic computing power is controlled by **Streaming Units (SU)**. Each streaming unit is approximately 1MB/second of throughput. Performance of the job depends on the number of **SU**, partition configuration of the inputs and the query of the job. ASA scales best if the data is **perfectly partitionable and embarrasingly parallel**. This [tutorial][TUT_SCALE_ASA] describes more about ASA scaling for throughput. The end goal of a predictive pipeline is machine learning (ML). ASA requires special attention when scaling for machine learning functions and jobs. This [tutorial][TUT_SCALE_ASA_ML] discusses the best practices on how to achieve ASA ML scaling. Pricing details for **Standard SU** can be found below.  
 
 |   USAGE   | PRICE   |
 |   :---:   | :---:   |
@@ -435,13 +437,13 @@ Azure Stream Analytics jobs are building blocks for increasing stream data proce
 > Learn more about ASA; documentation and pricing [here][LINK_ASA]
 
 ### 3. Azure HDInsight (HDI)
-HDI can be scaled for **General Availability** and/or **Compute Performance**. Changing the number of nodes scales for performance and availability. HDI cluster lets you change the number of nodes without having to delete or re-create it. On  [Azure Portal](#portal.azure.com), HDI has a **Scaling Feature** that allows you change the number of worker noders. When working with bigger datasets you may need to increase the number of your worker nodes in order to fit the end to end pipeline in the ADF **fifteen (15) minutes** time slice. Otherwise consider increase the time slice, in ADF, to allow the end to end pipeline to run completely.  
+HDI can be scaled for **General Availability** and/or **Compute Performance**. Changing the number of nodes scales for performance and availability. HDI cluster lets you change the number of nodes without having to delete or re-create it. On  [Azure Portal](#portal.azure.com), HDI has a **Scaling Feature** that allows you change the number of worker nodes. When working with bigger datasets you may need to increase the number of your worker nodes in order to fit the end to end pipeline in the **fifteen (15) minute**  ADF time slice. Otherwise, consider increasing the time slice in ADF to allow the end to end pipeline to run completely.  
 
 > Azure HDInsight pricing can be found [here][LINK_HDI_PRICING]
 > Learn more about Azure HDI manageability and scaling [here][LINK_HDI_SCALE]
 
 # Visualizations using Power BI Dashboard
-Use **Power BI** to gain powerful business insights by adding visualizations to the enriched customer profile data. Power BI can connect to a variety of data sources and in our solution, we will connect to the **Azure Storage Blob** which contains our enriched profile data. This section describes how to set up the sample Power BI dashboard to visualize the results of the end to end solution.
+Use **Power BI** to gain powerful business insights by adding visualizations to the enriched customer profile data. Power BI can connect to a variety of data sources and, in our solution, we will connect to the **Azure Storage Blob** which contains our enriched profile data. This section describes how to set up the sample Power BI dashboard to visualize the results of the end to end solution.
 
 1. **Get the Azure Storage Blob container Shared Access Signature (SAS) URL** generated by the CIQS deployment. 
 	- If you deployed this solution using CIQS, then one of the final steps outputs the **SAS URL** to the enriched customer profile blob. Please copy that URL for reference in Step 3 below. 
