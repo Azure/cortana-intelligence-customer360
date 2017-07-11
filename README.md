@@ -158,6 +158,8 @@ A predictive multi-class classifier is trained using rxBTrees. It enriches the e
 
 Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, **a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
 
+> **NOTE: It is recommended that you retrain this model at a regular frequency to ensure the model performance is acceptable to the business.**
+
 
 A short tutorial on how the model is trained can be found [here][TUT_TRAIN].
 
