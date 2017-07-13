@@ -1,5 +1,4 @@
-# Customer 360 Profile using Machine Learning on Azure Cortana Intelligence Stack
-
+# Customer 360 Profile using Machine Learning on Azure 
 The Customer 360 Profile solution provides you a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modelling and accurate predictions.
 
 This technical guide walks you through the steps to implement a customer 360 profile solution using Cortana Intelligence Suite on Microsoft Azure. The solution involves:
@@ -25,7 +24,7 @@ See the [*Technical Manual Deployment Guide*][6] folder for a full set of instru
 ## Disclaimer
 ©2017 Microsoft Corporation. All rights reserved.  This information is provided "as-is" and may change without notice. Microsoft makes no warranties, express or implied, with respect to the information provided here. Synthesized data was used to generate the solution and not representative of real world situations.  You are responsible for respecting the rights of others, including procuring and complying with relevant licenses in order to create similar datasets and solution.
 
-<-- Links --!>
+<!-- Links -->
 [1]: ./Solution%20Overview%20for%20Business%20Audiences
 [2]: http://aka.ms/CISFindPartner
 [3]: ./Technical%20Deployment%20Guide
