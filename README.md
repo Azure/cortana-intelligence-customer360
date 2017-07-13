@@ -16,7 +16,7 @@ This solution contains materials to help both technical and business audiences u
 ## Business Audiences
 In this repository you will find a folder called [**Solution Overview for Business Audiences**][1]. This folder contains a PowerPoint deck that covers the benefits of using this solution and the ways that Customer Profile Enrichment can help businesses better understand and focus on their customers' need.
 
-For more information on how to tailor Cortana Intelligence to your needs [connect with one of our partners][5].
+For more information on how to tailor Cortana Intelligence to your needs [connect with one of our partners][2].
 
 ## Technical Audiences
 See the [**Technical Manual Deployment Guide**][3] folder for a full set of instructions on how to customize and deploy this solution on Azure. For technical problems or questions about deploying this solution, please create an issue in this repository.
