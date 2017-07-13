@@ -14,12 +14,12 @@ This technical guide walks you through the steps to implement a customer 360 pro
 This solution contains materials to help both technical and business audiences understand the solution. All components are can be deployed and built on [Azure][4]. 
 
 ## Business Audiences
-In this repository you will find a folder called [*Solution Overview for Business Audiences*][1]. This folder contains a PowerPoint deck that covers the benefits of using this solution and the ways that Customer Profile Enrichment can help businesses better understand and focus on their customers' need.
+In this repository you will find a folder called [**Solution Overview for Business Audiences**][1]. This folder contains a PowerPoint deck that covers the benefits of using this solution and the ways that Customer Profile Enrichment can help businesses better understand and focus on their customers' need.
 
 For more information on how to tailor Cortana Intelligence to your needs [connect with one of our partners][5].
 
 ## Technical Audiences
-See the [*Technical Manual Deployment Guide*][6] folder for a full set of instructions on how to customize and deploy this solution on Azure. For technical problems or questions about deploying this solution, please create an issue in this repository.
+See the [**Technical Manual Deployment Guide**][3] folder for a full set of instructions on how to customize and deploy this solution on Azure. For technical problems or questions about deploying this solution, please create an issue in this repository.
 
 ## Disclaimer
 ©2017 Microsoft Corporation. All rights reserved.  This information is provided "as-is" and may change without notice. Microsoft makes no warranties, express or implied, with respect to the information provided here. Synthesized data was used to generate the solution and not representative of real world situations.  You are responsible for respecting the rights of others, including procuring and complying with relevant licenses in order to create similar datasets and solution.
