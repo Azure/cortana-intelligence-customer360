@@ -93,4 +93,6 @@ See the [**Technical Manual Deployment Guide**][3] folder for a full set of inst
 [2]: http://aka.ms/CISFindPartner
 [3]: ./Technical%20Deployment%20Guide
 [4]: https://azure.microsoft.com/en-us/
+[LINK_RFM]: https://en.wikipedia.org/wiki/RFM_%28customer_value%29
+[IMG_ARCH]: ./Technical%20Deployment%20Guide/assets/img/architecture.png
 
