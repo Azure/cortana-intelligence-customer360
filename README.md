@@ -11,6 +11,70 @@ This technical guide walks you through the steps to implement a customer 360 pro
  
 * **Machine Learning (ML)**):  Build an ML model to predict how likely a customer will purchase in the next few days and from which product category. The ML model enriches existing customer profiles based on their most recent activities.
 
+### 1. Definition and Benefits 
+To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 Profile comes in. 
+
+Customer 360 Profile is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
+
+Customer profile enrichment can be applied across multiple business use cases:
+
+1.	Design targeted sales events.
+	
+2.	Personalize promotions and offers
+	
+3.	Proactively reduce customer churn
+	
+4.	Predict customer buying behavior 
+	
+5.	Forecast demands for better pricing and inventory
+
+6.	Gain actionable insights for better sales and opportunity leads
+
+Some of the benefits of customer profile enrichment includes:
+* A 360-degree representation of the customer. 
+* Holistic view of your ideal customers’ purchasing behaviors and patterns.
+* Allows you to locate, understand and better connect to your ideal customers. 
+
+### What is under the hood
+Today businesses amass customer data through various channels, such as web browse patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
+
+In many cases, only basic customer information can be derived from first party data, while other valuable data remains embedded in different locations and schemas.  
+
+Traditionally most businesses leverage only a small set of this data. However, to boost ROI with enriched customer profile, you need to integrate relevant data from all sources, perform distributed ETL (Extract, Transform, Load) across data processing engines, and use predictive analytics and machine learning to enrich customer information. 
+
+An effective profile enrichment ML model must have access to large datasets even though those datasets are geographically dispersed and schematically heterogenous. Often, these data systems are resource constrained as these are used by multiple main-stream applications and processes simultaneously.
+
+That's why to prepare the data for ML, the feature engineering and ETL processes need to be off-loaded to more powerful computational systems, without having to move raw data physically.
+
+Physically moving raw data to compute not only adds to the cost of the solution but also adds network latency and reduces throughput.
+
+In this technical guide, we will walk you through the steps to create a customer 360 profile by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
+
+
+### 2. Architecture
+An effective profile enrichment ML model creates a holistic customer profile utilizing large datasets from disparate sources. These sources individually hold partial information directly or indirectly about the customer. The data, usually accumulated over time, needs to be prepared for the ML. Most of the data needed for enrichment reside on various heterogeneous, shared, and resource constrained systems which are used by multiple main-stream applications and processes.
+
+Thus, the feature engineering and ETL processes need to be off-loaded to more powerful computation systems without having to physically move the data. Physically moving the data to compute not only adds to the cost of the solution but also adds to network latency and reduces throughput. 
+
+Cross system query execution described in this guide provide ways to minimize data movement, incorporate data from heterogenous data sources (both on-prem and in-cloud), reduce system complexities and improve performance. 
+
+![Architecture Diagram][IMG_ARCH]
+
+**Figure 1: End to End Architecture to create a Customer 360 Profile.**
+
+In figure 1, the end to end pipeline is based on a hypothetical scenario that represents a retail company.
+
+Customers are assumed to browse through three online product categories, namely, Technology, Apparel and Cosmetics. 
+
+These categories and timestamp of simulated user actions are generated and streamed to the EventHub. 
+
+Aggregation of total time spent on each category is done by Azure Stream Analytics and the aggregated data is then stored in Azure Storage blobs.
+
+Using SparkSQL on Azure HDInsight the solution can perform feature engineering related steps like data wrangling, cross system query execution to bring in the referential data, and perform ETL to build a consolidated dataset. This consolidated dataset is then stored in the underlying Azure Storage (via a WASB connection) of the cluster, in preparation for ML.
+
+A pre-trained ML model is invoked into a Microsoft R Server instance which is also on the same HDInsight cluster, to classify what category of product a user is likely to purchase from. Since Microsoft R Server runs on the HDI cluster, the movement of raw data is minimized.
+
+
 This solution contains materials to help both technical and business audiences understand the solution. All components are can be deployed and built on [Azure][4]. 
 
 ## Business Audiences
