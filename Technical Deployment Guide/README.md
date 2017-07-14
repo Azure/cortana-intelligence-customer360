@@ -167,7 +167,7 @@ If you have deployed the solution from the Cortana Intelligence gallery, you sho
 
 Otherwise follow [this][TUT_DEPLOY] detailed tutorial that walks you through deploying all these resources using **PowerShell** and **Azure Resource Manager (ARM) templates** 
 
-> **Entire automated setup should have taken about 30 minutes.**   
+> **Entire automated setup should have taken about 20 minutes.**   
 
 # Usage
 ### 1. Data Generation
