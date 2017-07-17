@@ -9,9 +9,7 @@
 - [Pre-requisites](#pre-requisites)
 	- [Tools and Azure Services](#tools-and-azure-services)
 - [Customer 360](#customer-360)
-    * [1. Definition and Benefits](#1-definition-and-benefits)
-    	* [What is under the hood](#what-is-under-the-hood) 
-    * [2. Architecture](#2-architecture)
+    * [Architecture](#architecture)
 - [Solution Building Blocks](#solution-building-blocks)
 	* [1. Cross System Query Execution](#1-cross-system-query-execution)
     * [2. Machine Learning](#2-machine-learning)
@@ -40,47 +38,7 @@ This solution includes a detailed guidance on architectural best practices and r
 These tools and services make this solution easily adoptable by the IT department of any business.
 
 # Customer 360
-### 1. Definition and Benefits 
-To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 comes in. 
-
-Customer 360 is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
-
-Customer profile enrichment can be applied across multiple business use cases:
-
-1.	Design targeted sales events.
-	
-2.	Personalize promotions and offers
-	
-3.	Proactively reduce customer churn
-	
-4.	Predict customer buying behavior 
-	
-5.	Forecast demands for better pricing and inventory
-
-6.	Gain actionable insights for better sales and opportunity leads
-
-Some of the benefits of customer profile enrichment includes:
-* A 360-degree representation of the customer. 
-* Holistic view of your ideal customers’ purchasing behaviors and patterns.
-* Allows you to locate, understand and better connect to your ideal customers. 
-
-### What is under the hood
-Today businesses amass customer data through various channels, such as web browse patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
-
-In many cases, only basic customer information can be derived from first party data, while other valuable data remains embedded in different locations and schemas.  
-
-Traditionally most businesses leverage only a small set of this data. However, to boost ROI with enriched customer profile, you need to integrate relevant data from all sources, perform distributed ETL (Extract, Transform, Load) across data processing engines, and use predictive analytics and machine learning to enrich customer information. 
-
-An effective profile enrichment ML model must have access to large datasets even though those datasets are geographically dispersed and schematically heterogenous. Often, these data systems are resource constrained as these are used by multiple main-stream applications and processes simultaneously.
-
-That's why to prepare the data for ML, the feature engineering and ETL processes need to be off-loaded to more powerful computational systems, without having to move raw data physically.
-
-Physically moving raw data to compute not only adds to the cost of the solution but also adds network latency and reduces throughput.
-
-In this technical guide, we will walk you through the steps to create a customer 360 by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
-
-
-### 2. Architecture
+### Architecture
 An effective profile enrichment ML model creates a holistic customer profile utilizing large datasets from disparate sources. These sources individually hold partial information directly or indirectly about the customer. The data, usually accumulated over time, needs to be prepared for the ML. Most of the data needed for enrichment reside on various heterogeneous, shared, and resource constrained systems which are used by multiple main-stream applications and processes.
 
 Thus, the feature engineering and ETL processes need to be off-loaded to more powerful computation systems without having to physically move the data. Physically moving the data to compute not only adds to the cost of the solution but also adds to network latency and reduces throughput. 
