@@ -127,7 +127,7 @@ Again, structured datasets (e.g. customer demographics and historic purchases) i
 #### Model Training
 A predictive multi-class classifier is trained using `rxBTrees` on the Microsoft R Server (MRS). It enriches the existing profile for targeted insights and engagements, like personalized offers or targeted campaigns, via labels.
 
-Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, ** a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
+Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, **a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
 
 
 A short tutorial on how the model is trained can be found [here][TUT_TRAIN]
