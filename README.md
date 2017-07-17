@@ -1,7 +1,7 @@
-# Customer 360 Profile using Machine Learning on Azure 
-The Customer 360 Profile solution provides you a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modelling and accurate predictions.
+# Customer 360 using Machine Learning on Azure 
+The Customer 360 solution provides you a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modelling and accurate predictions.
 
-This technical guide walks you through the steps to implement a customer 360 profile solution using Cortana Intelligence Suite on Microsoft Azure. The solution involves:
+This technical guide walks you through the steps to implement a customer 360 solution using Cortana Intelligence Suite on Microsoft Azure. The solution involves:
 
 * **Ingestion and Pre-processing**: Ingest, prepare, and aggregate live user activity data. 
 
@@ -12,9 +12,9 @@ This technical guide walks you through the steps to implement a customer 360 pro
 * **Machine Learning (ML)**):  Build an ML model to predict how likely a customer will purchase in the next few days and from which product category. The ML model enriches existing customer profiles based on their most recent activities.
 
 ### 1. Definition and Benefits 
-To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 Profile comes in. 
+To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 comes in. 
 
-Customer 360 Profile is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
+Customer 360 is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
 
 Customer profile enrichment can be applied across multiple business use cases:
 
@@ -48,7 +48,7 @@ That's why to prepare the data for ML, the feature engineering and ETL processes
 
 Physically moving raw data to compute not only adds to the cost of the solution but also adds network latency and reduces throughput.
 
-In this technical guide, we will walk you through the steps to create a customer 360 profile by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
+In this technical guide, we will walk you through the steps to create a customer 360 by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
 
 
 ### 2. Architecture
@@ -60,7 +60,7 @@ Cross system query execution described in this guide provide ways to minimize da
 
 ![Architecture Diagram][IMG_ARCH]
 
-**Figure 1: End to End Architecture to create a Customer 360 Profile.**
+**Figure 1: End to End Architecture to create a Customer 360.**
 
 In figure 1, the end to end pipeline is based on a hypothetical scenario that represents a retail company.
 
@@ -78,7 +78,7 @@ A pre-trained ML model is invoked into a Microsoft R Server instance which is al
 This solution contains materials to help both technical and business audiences understand the solution. All components are can be deployed and built on [Azure][4]. 
 
 ## Business Audiences
-In this repository you will find a folder called [**Solution Overview for Business Audiences**][1]. This folder contains a PowerPoint deck that covers the benefits of using this solution and the ways that Customer Profile Enrichment can help businesses better understand and focus on their customers' need.
+In this repository you will find a folder called [**Solution Overview for Business Audiences**][1]. This folder contains a PowerPoint deck that covers the benefits of using this solution and the ways that customer profile enrichment can help businesses better understand and focus on their customers' need.
 
 For more information on how to tailor Cortana Intelligence to your needs [connect with one of our partners][2].
 

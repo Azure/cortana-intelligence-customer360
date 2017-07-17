@@ -1,22 +1,24 @@
-# Technical Guide to Create a Customer 360 Profile using Machine Learning
+# Technical Guide to Create a Customer 360 using Machine Learning
 
 # About this repository
 * Maintainer: CIQS Solution Architects (cisolutions@microsoft.com)
-* Project: Customer 360 Profile (Solution How-to Guide)
-* Use case: Enabling Machine Learning to enrich customer profiles.. In this solution, we provide a model that uses enriched customer profiles to predict which product category a given customer is likely to purchase from. The model is trained using scaled out Gradient Boosted Machine (GBM) algorithm and runs on a Microsoft R Server. The model is trained using historic purchases, demographics, and customers’ browsing behavior data.    
+* Project: Customer 360 (Solution How-to Guide)
+* Use case: Enabling Machine Learning to enrich customer profiles. In this solution, we provide a model that uses enriched customer profiles to predict which product category a given customer is likely to purchase from. The model is trained using scaled out Gradient Boosted Machine (GBM) algorithm and runs on a Microsoft R Server. The model is trained using historic purchases, demographics, and customers’ browsing behavior data.    
 
 ## Table of Contents
 - [Pre-requisites](#pre-requisites)
 	- [Tools and Azure Services](#tools-and-azure-services)
-- [Customer 360 Profile](#customer-360-profile)
+- [Customer 360](#customer-360)
     * [1. Definition and Benefits](#1-definition-and-benefits)
     	* [What is under the hood](#what-is-under-the-hood) 
     * [2. Architecture](#2-architecture)
 - [Solution Building Blocks](#solution-building-blocks)
 	* [1. Cross System Query Execution](#1-cross-system-query-execution)
     * [2. Machine Learning](#2-machine-learning)
+    	* [Model Training](#model-training)
+    	* [Scoring](#scoring)
 	* [3. Data Pipeline Triggering and Job Orchestration](#3-data-pipeline-triggering-and-job-orchestration)
-	* [4. ML Model Training](#4-ml-model-training)
+	
 - [Solution Setup](#solution-setup)  
 - [Usage](#usage)
 	* [1. Data Generation](#1-data-generation)
@@ -37,11 +39,11 @@ This solution includes a detailed guidance on architectural best practices and r
 
 These tools and services make this solution easily adoptable by the IT department of any business.
 
-# Customer 360 Profile
+# Customer 360
 ### 1. Definition and Benefits 
-To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 Profile comes in. 
+To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 comes in. 
 
-Customer 360 Profile is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
+Customer 360 is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
 
 Customer profile enrichment can be applied across multiple business use cases:
 
@@ -75,7 +77,7 @@ That's why to prepare the data for ML, the feature engineering and ETL processes
 
 Physically moving raw data to compute not only adds to the cost of the solution but also adds network latency and reduces throughput.
 
-In this technical guide, we will walk you through the steps to create a customer 360 profile by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
+In this technical guide, we will walk you through the steps to create a customer 360 by uniformly accessing data from a variety of data sources (both on-prem and in-cloud) while minimizing data movement and system complexity to boost performance.
 
 
 ### 2. Architecture
@@ -87,7 +89,7 @@ Cross system query execution described in this guide provide ways to minimize da
 
 ![Architecture Diagram][IMG_ARCH]
 
-**Figure 1: End to End Architecture to create a Customer 360 Profile.**
+**Figure 1: End to End Architecture to create a Customer 360.**
 
 In figure 1, the end to end pipeline is based on a hypothetical scenario that represents a retail company.
 
@@ -122,7 +124,16 @@ Again, structured datasets (e.g. customer demographics and historic purchases) i
 > Refer to this tutorial for details on [Cross System Query Execution][DV_GH]. 
 
 ### 2. Machine Learning
-The multi-class classifier Machine Learning model is built using an HDInsight cluster with Microsoft R Server (MRS) at scale. The power of R is leveraged using the MRS `rxBTrees` algorithm. `rxBTrees` scales the Gradient Boosting Machine (`gbm()`) that solves classification and regression problems. Its implementation is built upon `rxDTree`. It combines weak learners in an additive and iterative manner to produce accurate classifiers that are resistant to overfitting.  
+#### Model Training
+A predictive multi-class classifier is trained using `rxBTrees` on the Microsoft R Server (MRS). It enriches the existing profile for targeted insights and engagements, like personalized offers or targeted campaigns, via labels.
+
+Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, ** a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
+
+
+A short tutorial on how the model is trained can be found [here][TUT_TRAIN]
+
+#### Scoring
+The pre-trained multi-class classifier is used at scale to batch score the customer profiles every ADF timeslice. The power of R is leveraged using the MRS `rxBTrees` algorithm. `rxBTrees` scales the Gradient Boosting Machine (`gbm()`) that solves classification and regression problems. Its implementation is built upon `rxDTree`. It combines weak learners in an additive and iterative manner to produce accurate classifiers that are resistant to overfitting.  
 
 > Learn more about [rxBTress][ML_Algo_Link]  and [Microsoft R Server][LINK_RServer].  
 
@@ -133,15 +144,6 @@ The downstream orchestration, starting from the data preparation of data for ML 
 Synchronization between the webjob and the ADF pipelines is critical. Azure Data Factory is used to synchronize and orchestrate data movement, ETL and Customer Profile Enrichment activities. 
 
 Activities in ADF **(Azure Data Factory)** parlance are triggered at predefined intervals of time called time slices. In this solution, each time slice is fifteen **(15)** minutes wide. At every time slice, two pipelines activities are triggered. One for orchestrating the feature engineering and ETL process and a second for orchestrating the ML prediction process; these are fired sequentially.
-
-
-### 4. ML Model Training
-A predictive multi-class classifier is trained using rxBTrees. It enriches the existing profile for targeted insights and engagements, like personalized offers or targeted campaigns, via labels.
-
-Each customer gets a label assigned based on a predicted (ML) category a customer is likely to purchase from. For example, ** a customer with predicted labels 1, 2, 3 are likely to buy from categories 1, 2 or 3 respectively and 0 is unlikely to buy anything**.
-
-
-A short tutorial on how the model is trained can be found [here][TUT_TRAIN]
 
 # Solution Setup
 If you have deployed the solution from the Cortana Intelligence gallery, you should have created the following resources in your Azure subscription. 
@@ -381,7 +383,7 @@ Revo64 CMD BATCH "--args <location_of_classifier_on_wasb> <path_to_data_slice> <
 The Azure Stream Analytics continuously aggregates the stream of user activity data sent to the EventHub by the data simulator.  And for each ADF time slice (15 minutes), the aggregated data from ASA are piped to the ETL process and then classified using the pre-trained model (both running on an HDInsight cluster). The final enriched profiles are written out to a csv file that maps to an external table on Azure SQL Data Warehouse. For each orchestrated time slice, the Azure SQL DW table refreshes with new enriched customer profiles that reflect their most recent activities. Interactive visualizations, using PowerBI, can be extracted from the Azure SQL DW table to gain a deeper understanding of the customer. 
 
 # Scaling
-For a cost effective demonstration (i.e. end to end operation) of this solution, the data generator has been downscaled to produce approximately **7500 messages** every **15 minutes** to fit an ADF time slice. However, the batch size of the data generator can easily be tuned to scale up to **100 messages per second**. The data generator batches events to EventHub and the batch size can be scaled up to even larger numbers. Each component in the architecture supports a separate level of scale. Each service can be scaled **up** to support a higher throughput or scaled **out** to spread throughput across multiple services. We observed a linear relationship between the number of EventHub Throughput Units and Azure Stream Analytics Stream Unit (SU). The numbers in the table below are specifically for this solution and do not reflect service limits of the individual Azure services used in this solution. The sub-sections below go into details about the scaling and limitations of the individual Azure services.
+For a cost effective demonstration (i.e. end to end operation) of this solution, the data generator has been scaled to produce approximately **201,000 messages** every **15 minutes** to fit an ADF time slice. Every 15 minute time slice represents 67 days of simulated browsing activities. However, the batch size of the data generator can easily be tuned to scale up. The data generator batches events to EventHub and the batch size can be scaled up to even larger numbers. Each component in the architecture supports a separate level of scale. Each service can be scaled **up** to support a higher throughput or scaled **out** to spread throughput across multiple services. We observed a linear relationship between the number of EventHub Throughput Units and Azure Stream Analytics Stream Unit (SU). The numbers in the table below are specifically for this solution and do not reflect service limits of the individual Azure services used in this solution. The sub-sections below go into details about the scaling and limitations of the individual Azure services.
 
 |  EventHub Throughput Unit (TU) | ASA Streaming Unit  (SU) | Number of messages batched into EventHub | Number of messages reaching ASA from EventHub | 
 | :----------------------------: | :----------------------: | :--------------------------------------: | :--------------------------------------------: | 
@@ -457,7 +459,7 @@ Use **Power BI** to gain powerful business insights by adding visualizations to 
 	
     - Click **Publish**. After a few seconds a window will appear displaying **Publishing to Power BI Success!** with a green check mark. To find detailed instructions, see [Publish from Power BI Desktop][LINK_PUB_PBI_ONLINE].
     
-    - To create a new dashboard: click the **+** sign next to the **Dashboards** section on the left pane. Name this dashboard **"Customer 360 Profile"**.
+    - To create a new dashboard: click the **+** sign next to the **Dashboards** section on the left pane. Name this dashboard **"Customer 360"**.
     
 4. **Schedule refresh of the data source (Optional)**.
     - To schedule refresh of the data, hover your mouse over the dataset, click **"..."** and then choose **Schedule Refresh**. 
