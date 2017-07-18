@@ -125,7 +125,9 @@ If you have deployed the solution from the Cortana Intelligence gallery, you sho
 - **PowerBI** - Fully interactive data visualizations.
 
 
-Otherwise follow [this][TUT_DEPLOY] detailed tutorial that walks you through deploying all these resources using **PowerShell** and **Azure Resource Manager (ARM) templates** 
+Otherwise go to the [**Cortana Intelligence Gallery Page**][CIQS_DEPLOY] to deploy the above mentioned resources in your Azure resources. 
+
+> **NOTE:** If you would like more control by going through a **step by step** approach, then you might find the manual deployment increasing. Prior knowledge of **PowerShell, C# and Azure Resource Manager (ARM) templates** is a must for [this][TUT_DEPLOY] detailed tutorial that walks you through deploying all these resources.
 
 > **Entire automated setup should have taken about 20 minutes.**   
 
@@ -447,6 +449,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 
 
 <!-- LINKS -->
+[CIQS_DEPLOY]: https://gallery.cortanaintelligence.com/Solution/Customer-360
 [IMG_HE]: ./assets/img/hybrid_execution.png
 [IMG_ARCH]: ./assets/img/architecture.png
 [IMG_DG_LOGIC]: ./assets/img/dg_logic.png
