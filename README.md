@@ -35,7 +35,7 @@ Some of the benefits of customer profile enrichment includes:
 * Holistic view of your ideal customers’ purchasing behaviors and patterns.
 * Allows you to locate, understand and better connect to your ideal customers. 
 
-### What is under the hood
+#### What is under the hood  
 Today businesses amass customer data through various channels, such as web browse patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
 
 In many cases, only basic customer information can be derived from first party data, while other valuable data remains embedded in different locations and schemas.  
