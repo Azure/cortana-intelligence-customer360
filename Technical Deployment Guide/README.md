@@ -1,7 +1,7 @@
 # Technical Guide to Create a Customer 360 using Machine Learning
 
 # About this repository
-* Maintainer: CIQS Solution Architects (cisolutions@microsoft.com)
+* Maintainer: CIQS Solution Architects <cisolutions@microsoft.com>
 * Project: Customer 360 (Solution How-to Guide)
 * Use case: Enabling Machine Learning to enrich customer profiles. In this solution, we provide a model that uses enriched customer profiles to predict which product category a given customer is likely to purchase from. The model is trained using scaled out Gradient Boosted Machine (GBM) algorithm and runs on a Microsoft R Server. The model is trained using historic purchases, demographics, and customers’ browsing behavior data.    
 
