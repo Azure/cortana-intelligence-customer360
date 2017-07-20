@@ -431,7 +431,8 @@ Use **Power BI** to gain powerful business insights by adding visualizations to 
     - Schedule the refresh based on your needs. To find more information, see [Data refresh in Power BI][LINK_REFRESH_PBI].
 
 # Exit and Clean up 
-You’ll be charged for running the solution in Azure. To avoid incurring charges, please remove the deployment after you have completed the tutorial deployment and evaluation. You can remove it by selecting and deleting the created resource group from [Azure Portal](#portal.azure.com).
+You’ll be charged for running the solution in Azure. To avoid incurring charges, please remove the deployment after you have completed the tutorial deployment and evaluation. 
+> **NOTE** If you deployed this solution from the gallery, click on [this][LINK_CIQS_DEPLOYMENTS] link to see all your deployments. To delete, hover over and select the deployment you want to clean up, and then click on the trash icon next to it. For manual deployments via **ARM**, delete the created resource group from [Azure Portal](#portal.azure.com).
 
 # Copyright
 &copy; 2017 Microsoft Corporation. All rights reserved. This information is provided "as-is" and may change without notice. Microsoft makes no warranties, express or implied, with respect to the information provided here. Third party data was used to generate the solution. You are responsible for respecting the rights of others, including procuring and complying with relevant licenses to create similar datasets.  
@@ -474,5 +475,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [LINK_REFRESH_PBI]: https://powerbi.microsoft.com/documentation/powerbi-refresh-data/
 [LINK_STORAGE_EXPLORER]: http://www.storageexplorer.com
 [LINK_PBIX_FILE]: ./assets/pbi/r360_PBI.pbix
+[LINK_CIQS_DEPLOYMENTS]: https://start.cortanaintelligence.com/Deployments 
 [VID_EH_SCALE]: https://channel9.msdn.com/Shows/Azure-Friday/Scaling-out-Azure-Service-Bus-Event-Hubs-102-with-Dan-Rosanova
 
