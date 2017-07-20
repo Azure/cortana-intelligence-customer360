@@ -79,7 +79,7 @@ Again, structured datasets (e.g. customer demographics and historic purchases) i
 **Figure 2:**  System-level overview of Cross System Query Execution.  
 
 
-> Refer to this tutorial for details on [Cross System Query Execution][DV_GH]. 
+> Refer to this tutorial for details on [Cross System Query Execution][DV_GH_HE]. 
 
 ### 2. Machine Learning
 #### Model Training
@@ -456,7 +456,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [IMG_DG_LOGIC]: ./assets/img/dg_logic.png
 [DG_SQL]: ./src/sql/configure-database.ps1
 [DG_LINK]: ./src/Python/retail360DG.py
-[DV_GH]: https://github.com/Azure/cortana-intelligence-data-virtualization-techniques-using-sql-server-2016-and-hdinsight
+[DV_GH_HE]: https://github.com/Azure/cortana-intelligence-data-virtualization-techniques-using-sql-server-2016-and-hdinsight#hybrid-execution-architecture
 [SCRIPT_ETL]: ./src/Python/etl_and_feature_engineering.py
 [SCRIPT_SCORING]: ./src/R/Scoring.R
 [TUT_TRAIN]: ./docs/training.md
