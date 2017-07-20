@@ -30,7 +30,7 @@
 - [License](#license)
 
 # Pre-requisites
-To deploy this solution you will need an active [Azure](https://portal.azure.com) subscription. In this solution, we will implement a number of Azure services described in the [Solution Setup](#solution-setup) section of this document.
+To deploy this solution you will need an active [Azure][LINK_AZURE] subscription. In this solution, we will implement a number of Azure services described in the [Solution Setup](#solution-setup) section of this document.
 
 ### Tools and Azure Services
 This solution includes a detailed guidance on architectural best practices and recommended big data tools and services. These tools and services are used to build a customer profile enrichment solution on Azure. This solution uses managed services on Azure namely, **Microsoft R Server, Azure Data Warehouse, Azure HDInsight Cluster, Azure Storage Blob, Azure EventHub, Azure Stream Analytics, Azure Data Factory, Azure Functions, and PowerBI**. It also uses industry standard open source tools commonly used by data scientists and engineers: **Python, SparkSQL/PySpark, and Scalable R**.
@@ -432,7 +432,7 @@ Use **Power BI** to gain powerful business insights by adding visualizations to 
 
 # Exit and Clean up 
 You’ll be charged for running the solution in Azure. To avoid incurring charges, please remove the deployment after you have completed the tutorial deployment and evaluation. 
-> **NOTE** If you deployed this solution from the gallery, click on [this][LINK_CIQS_DEPLOYMENTS] link to see all your deployments. To delete, hover over and select the deployment you want to clean up, and then click on the trash icon next to it. For manual deployments via **ARM**, delete the created resource group from [Azure Portal](#portal.azure.com).
+> **NOTE** If you deployed this solution from the gallery, click on [this][LINK_CIQS_DEPLOYMENTS] link to see all your deployments. To delete, hover over and select the deployment you want to clean up, and then click on the trash icon next to it. For manual deployments via **ARM**, delete the created resource group from [Azure Portal][LINK_AZURE_PORTAL]
 
 # Copyright
 &copy; 2017 Microsoft Corporation. All rights reserved. This information is provided "as-is" and may change without notice. Microsoft makes no warranties, express or implied, with respect to the information provided here. Third party data was used to generate the solution. You are responsible for respecting the rights of others, including procuring and complying with relevant licenses to create similar datasets.  
@@ -475,6 +475,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 [LINK_REFRESH_PBI]: https://powerbi.microsoft.com/documentation/powerbi-refresh-data/
 [LINK_STORAGE_EXPLORER]: http://www.storageexplorer.com
 [LINK_PBIX_FILE]: ./assets/pbi/r360_PBI.pbix
-[LINK_CIQS_DEPLOYMENTS]: https://start.cortanaintelligence.com/Deployments 
+[LINK_CIQS_DEPLOYMENTS]: https://start.cortanaintelligence.com/Deployments?type=customer-360
+[LINK_AZURE_PORTAL]: https://portal.azure.com
 [VID_EH_SCALE]: https://channel9.msdn.com/Shows/Azure-Friday/Scaling-out-Azure-Service-Bus-Event-Hubs-102-with-Dan-Rosanova
 
