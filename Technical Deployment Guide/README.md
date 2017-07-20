@@ -381,7 +381,7 @@ Azure Stream Analytics jobs are building blocks for increasing stream data proce
 > Learn more about ASA; documentation and pricing [here][LINK_ASA]
 
 ### 3. Azure HDInsight (HDI)
-HDI can be scaled for **General Availability** and/or **Compute Performance**. Changing the number of nodes scales for performance and availability. HDI cluster lets you change the number of nodes without having to delete or re-create it. On  [Azure Portal](#portal.azure.com), HDI has a **Scaling Feature** that allows you change the number of worker noders. When working with bigger datasets you may need to increase the number of your worker nodes in order to fit the end to end pipeline in the ADF **fifteen (15) minutes** time slice. Otherwise consider increase the time slice, in ADF, to allow the end to end pipeline to run completely.  
+HDI can be scaled for **General Availability** and/or **Compute Performance**. Changing the number of nodes scales for performance and availability. HDI cluster lets you change the number of nodes without having to delete or re-create it. On  [Azure Portal][LINK_AZURE_PORTAL], HDI has a **Scaling Feature** that allows you change the number of worker noders. When working with bigger datasets you may need to increase the number of your worker nodes in order to fit the end to end pipeline in the ADF **fifteen (15) minutes** time slice. Otherwise consider increase the time slice, in ADF, to allow the end to end pipeline to run completely.  
 
 > Azure HDInsight pricing can be found [here][LINK_HDI_PRICING]
 > Learn more about Azure HDI manageability and scaling [here][LINK_HDI_SCALE]
@@ -413,7 +413,7 @@ Use **Power BI** to gain powerful business insights by adding visualizations to 
          - If your dashboards are empty, clear the stale visuals by selecting the visualizations and clicking the eraser icon on the upper right corner of the legends. Then use the refresh button to reflect new data on the visualizations.
          - Alternatively, clicking on the yellow **Fix this** button might automatically resolve the issue. 
 	 
-3. **Publish the dashboard to [Power BI online](#www.powerbi.com) (Optional)**. 
+3. **Publish the dashboard to [Power BI online](www.powerbi.com) (Optional)**. 
 
 	> **Note that this step needs a Power BI account (or Office 365 account)**.
 	
