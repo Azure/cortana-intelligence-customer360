@@ -30,7 +30,7 @@
 - [License](#license)
 
 # Pre-requisites
-To deploy this solution you will need an active [Azure][LINK_AZURE] subscription. In this solution, we will implement a number of Azure services described in the [Solution Setup](#solution-setup) section of this document.
+To deploy this solution you will need an active [Azure][LINK_AZURE_PORTAL] subscription. In this solution, we will implement a number of Azure services described in the [Solution Setup](#solution-setup) section of this document.
 
 ### Tools and Azure Services
 This solution includes a detailed guidance on architectural best practices and recommended big data tools and services. These tools and services are used to build a customer profile enrichment solution on Azure. This solution uses managed services on Azure namely, **Microsoft R Server, Azure Data Warehouse, Azure HDInsight Cluster, Azure Storage Blob, Azure EventHub, Azure Stream Analytics, Azure Data Factory, Azure Functions, and PowerBI**. It also uses industry standard open source tools commonly used by data scientists and engineers: **Python, SparkSQL/PySpark, and Scalable R**.
