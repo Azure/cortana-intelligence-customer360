@@ -70,7 +70,6 @@ A pre-trained ML model is invoked into a Microsoft R Server instance which is al
 The feature engineering and ETL process relies heavily on accessing referential datasets (stored in Azure Data Warehouse) directly from Azure HDInsight (Hadoop based system).
 
 Again, structured datasets (e.g. customer demographics and historic purchases) in Azure SQL Data Warehouse need to be joined with NoSQL streaming data on Azure storage blob.
-
 **Cross System Query Execution**, uses **JDBC**, which allows the push of query to the SQL DW to access the views of the necessary referential data for ETL.
 
 
@@ -93,7 +92,7 @@ A short tutorial on how the model is trained can be found [here][TUT_TRAIN]
 #### Scoring
 The pre-trained multi-class classifier is used at scale to batch score the customer profiles every ADF timeslice. The power of R is leveraged using the MRS `rxBTrees` algorithm. `rxBTrees` scales the Gradient Boosting Machine (`gbm()`) that solves classification and regression problems. Its implementation is built upon `rxDTree`. It combines weak learners in an additive and iterative manner to produce accurate classifiers that are resistant to overfitting.  
 
-> Learn more about [rxBTress][ML_Algo_Link]  and [Microsoft R Server][LINK_RServer].  
+> Learn more about [rxBTrees][ML_Algo_Link]  and [Microsoft R Server][LINK_RServer].  
 
 ### 3. Data Pipeline Triggering and Job Orchestration
 The data pipeline for this solution is triggered by an Azure (Python) WebJob that generates the simulated user activity data stream. 
