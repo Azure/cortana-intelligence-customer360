@@ -1,24 +1,24 @@
 # Customer 360 using Machine Learning on Azure 
-The Customer 360 solution provides you a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modelling and accurate predictions.
+The Customer 360 solution provides you with a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modeling and accurate predictions.
 
 This technical guide walks you through the steps to implement a customer 360 solution using Cortana Intelligence Suite on Microsoft Azure. The solution involves:
 
 * **Ingestion and Pre-processing**: Ingest, prepare, and aggregate live user activity data. 
 
-* **Integration of Data Sources**: Integrate and federate customer profile data that’s embedded across disparate data sources. 
+* **Integration of Data Sources**: Integrate and federate customer profile data that is embedded across disparate data sources. 
 
 * **Feature engineering and ETL**: Segment customers into [RFM][LINK_RFM] segments based on their browsing and purchase behavior. 
  
-* **Machine Learning (ML)**):  Build an ML model to predict how likely a customer will purchase in the next few days and from which product category. The ML model enriches existing customer profiles based on their most recent activities.
+* **Machine Learning (ML)**):  Build a ML model to predict how likely a customer will purchase in the next few days and from which product category. The ML model enriches existing customer profiles based on their most recent activities.
 
 ### 1. Definition and Benefits 
-To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That’s where Customer 360 comes in. 
+To improve market positioning and profitability, it is important to deeply understand the connection between customer interests and buying patterns. That is where Customer 360 comes in. 
 
 Customer 360 is an advanced solution to enrich customer profiles using machine learning. A 360-degree enriched customer profile is key to derive actionable insights and smarter data-driven decisions. 
 
 Customer profile enrichment can be applied across multiple business use cases:
 
-1.	Design targeted sales events.
+1.	Design targeted sales events
 	
 2.	Personalize promotions and offers
 	
@@ -36,7 +36,7 @@ Some of the benefits of customer profile enrichment includes:
 * Allows you to locate, understand and better connect to your ideal customers. 
 
 #### What is under the hood  
-Today businesses amass customer data through various channels, such as web browse patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
+Today businesses amass customer data through various channels, such as web browsing patterns, purchase behaviors, demographic information, and other session-based web footprints. While some of the data is first party to the organization, others are derived from external sources, such as, public domain, partners, manufactures and so on. 
 
 In many cases, only basic customer information can be derived from first party data, while other valuable data remains embedded in different locations and schemas.  
 
@@ -44,7 +44,7 @@ Traditionally most businesses leverage only a small set of this data. However, t
 
 An effective profile enrichment ML model must have access to large datasets even though those datasets are geographically dispersed and schematically heterogenous. Often, these data systems are resource constrained as these are used by multiple main-stream applications and processes simultaneously.
 
-That's why to prepare the data for ML, the feature engineering and ETL processes need to be off-loaded to more powerful computational systems, without having to move raw data physically.
+That is why to prepare the data for ML, the feature engineering and ETL processes need to be off-loaded to more powerful computational systems, without having to move raw data physically.
 
 Physically moving raw data to compute not only adds to the cost of the solution but also adds network latency and reduces throughput.
 
@@ -72,7 +72,7 @@ Aggregation of total time spent on each category is done by Azure Stream Analyti
 
 Using SparkSQL on Azure HDInsight the solution can perform feature engineering related steps like data wrangling, cross system query execution to bring in the referential data, and perform ETL to build a consolidated dataset. This consolidated dataset is then stored in the underlying Azure Storage (via a WASB connection) of the cluster, in preparation for ML.
 
-A pre-trained ML model is invoked into a Microsoft R Server instance which is also on the same HDInsight cluster, to classify what category of product a user is likely to purchase from. Since Microsoft R Server runs on the HDI cluster, the movement of raw data is minimized.
+A pre-trained ML model is invoked into a Microsoft R Server instance which is also on the same HDInsight cluster, to classify what category of product a user is likely to purchase from in the future. Since Microsoft R Server runs on the HDI cluster, the movement of raw data is minimized.
 
 
 This solution contains materials to help both technical and business audiences understand the solution. All components are can be deployed and built on [Azure][4]. 
