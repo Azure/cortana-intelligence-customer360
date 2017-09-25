@@ -126,8 +126,6 @@ If you have deployed the solution from the Cortana Intelligence gallery, you sho
 
 Otherwise go to the [**Cortana Intelligence Gallery Page**][CIQS_DEPLOY] to deploy the above mentioned resources in your Azure resources. 
 
-> **NOTE:** If you would like more control by going through a **step by step** approach, then you might find the manual deployment steps interesting. Prior knowledge of **PowerShell, C# and Azure Resource Manager (ARM) templates** is a **MUST** for [this][TUT_DEPLOY] detailed tutorial that walks you through deploying all these resources.
-
 > **Entire automated setup should have taken about 25 minutes.**   
 
 # Usage
@@ -136,8 +134,6 @@ Otherwise go to the [**Cortana Intelligence Gallery Page**][CIQS_DEPLOY] to depl
 The following referential tables are pre-generated and loaded into Azure SQL Data Warehouse. 
 
 The columns/featured used in this solution are outlined below each listed table. 
-
-> Find [PowerShell script that can do this for you][DG_SQL].  
 
 1. **6000 Customers**  
 	- Age
