@@ -247,7 +247,7 @@ Once the initial training of the model is complete, only the model based web ser
 
 <!--  Links -->
 [LINK_MRS]: https://azure.microsoft.com/en-us/services/hdinsight/r-server/
-[LINK_CLEANDATA]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/data/customer_profile_label.csv
-[SCRIPT_INGEST]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_ingest_blob.R
-[SCRIPT_MODEL]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_model_blob.R
-[SCRIPT_DEPLOY]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/blob/master/src/R/data_deploy_blob.R
+[LINK_CLEANDATA]: https://github.com/Azure/cortana-intelligence-customer360/blob/master/Technical%20Deployment%20Guide/data/customer_profile_label.csv
+[SCRIPT_INGEST]: https://github.com/Azure/cortana-intelligence-customer360/blob/master/Technical%20Deployment%20Guide/src/R/data_deploy_blob.R
+[SCRIPT_MODEL]: https://github.com/Azure/cortana-intelligence-customer360/blob/master/Technical%20Deployment%20Guide/src/R/data_model_blob.R
+[SCRIPT_DEPLOY]: https://github.com/Azure/cortana-intelligence-customer360/blob/master/Technical%20Deployment%20Guide/src/R/data_deploy_blob.R
