@@ -47,15 +47,16 @@ Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activ
 	```
 	> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)  
 	
-- **STEP 4** - Deploy an Azure Function App
+- **STEP 4** - Deploy an Azure Function App  
 Azure Functions will be used for setup and orchestration of your entire solution. 
 
     ```PowerShell
     $templatePath = "functionapp.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
     ```  
-    ** MANUAL STEPS AFTER FUNCTION DEPLOY**  
-    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App File System. 
+    
+    **MANUAL STEPS AFTER FUNCTION DEPLOY**  
+    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system. 
     2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.
     
     ```csharp
@@ -70,28 +71,28 @@ Azure Functions will be used for setup and orchestration of your entire solution
           public string SqlDatabase { get; set; }
     }
 	```
-    > NOTE: The value for **PatternAssetBaseUrl** is  https://ciqsdatastorage.blob.core.windows.net/customer-360`  
+    > NOTE: The value for **PatternAssetBaseUrl** should be https://ciqsdatastorage.blob.core.windows.net/customer-360  
 
-- **STEP 5** - Deploy other resources. 
+- **STEP 5** - Deploy other resources  
 Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the following JSON templates in the following order:  
 	> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).   
 
 	- **01.json**  
     ```PowerShell
     $templatePath = "01.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
     ```
     
     - **02.json**  
     ```PowerShell
     $templatePath = "02.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 2" -TemplateUri $templatePath 
     ```
     
     - **03.json** 
     ```PowerShell
     $templatePath = "03.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 3" -TemplateUri $templatePath 
     ```
     
  <!-- Links -->
