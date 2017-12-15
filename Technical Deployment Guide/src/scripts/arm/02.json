@@ -1,0 +1,180 @@
+ {
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "admin-username": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin user name (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    },
+    "admin-password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    }
+  },
+  "variables": {
+    "unique": "[uniqueString(resourceGroup().id)]",
+    "location": "[resourceGroup().location]",
+    "storage-version": "2016-01-01",
+    "network-version": "2016-12-01",
+    "hdinsight-version": "2015-03-01-preview",
+    "sqldw-version": "2014-04-01-preview",
+    "datafactory-version": "2015-10-01",
+    "eventhub-version": "2015-08-01",
+    "stream-analytics-version": "2015-10-01",
+    "web-farm-version": "2016-09-01",
+    "web-site-version": "2016-08-01",
+    "prefix": "cust360",
+    "hdinsight-name": "[concat(variables('prefix'), '-hdi-', variables('unique'))]",
+    "hdinsight-id": "[resourceId('Microsoft.HDInsight/clusters', variables('hdinsight-name'))]",
+    "hdinsight-container": "[variables('hdinsight-name')]",
+    "hdinsight-os-profile": {
+      "linuxOperatingSystemProfile": { "username": "[parameters('admin-username')]", "password": "[parameters('admin-password')]" }
+    },
+    "storage-account-name": "[concat(variables('prefix'), 'stor', variables('unique'))]",
+    "storage-account-id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
+    "sql-server-name": "[concat('sqlserver', variables('unique'))]",
+		"sql-server-uri": "[concat(variables('sql-server-name'),'.database.windows.net')]",
+    "sql-server-id": "[resourceId('Microsoft.Sql/servers', variables('sql-server-name'))]",
+    "sqldw-name": "Customer360",
+		"sqldw-id": "[resourceId('Microsoft.Sql/servers/databases', variables('sql-server-name'), variables('sqldw-name'))]",
+    "datafactory-name": "[concat(variables('prefix'), 'df', variables('unique'))]",
+    "datafactory-id": "[resourceId('Microsoft.DataFactory/dataFactories', variables('datafactory-name'))]",
+    "eventhub-namespace-name": "[concat(variables('prefix'), 'ehns', variables('unique'))]",
+    "eventhub-namespace-id": "[resourceId('Microsoft.EventHub/namespaces', variables('eventhub-namespace-name'))]",
+    "eventhub-name": "[concat(variables('prefix'), 'eh', variables('unique'))]",
+    "eventhub-id": "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventhub-namespace-name'), variables('eventhub-name'))]",
+    "eventhub-key-name": "RootManageSharedAccessKey",
+    "eventhub-key-id": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventhub-namespace-name'), variables('eventhub-key-name'))]",
+    "stream-analytics-name": "[concat(variables('prefix'), 'sa', variables('unique'))]",
+    "stream-analytics-id": "[resourceId('Microsoft.StreamAnalytics/streamingjobs', variables('stream-analytics-name'))]",
+    "web-farm-name": "[concat(variables('prefix'), 'webplan', variables('unique'))]",
+    "web-farm-id": "[resourceId('Microsoft.Web/serverfarms', variables('web-farm-name'))]",
+    "web-site-name": "[concat(variables('prefix'), 'web', variables('unique'))]",
+    "web-site-id": "[resourceId('Microsoft.Web/sites', variables('web-site-name'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.HDInsight/clusters",
+      "name": "[variables('hdinsight-name')]",
+      "apiVersion": "[variables('hdinsight-version')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "clusterVersion": "3.5",
+        "osType": "Linux",
+        "tier": "standard",
+        "clusterDefinition": {
+          "kind": "rserver",
+          "configurations": {
+            "gateway": {
+              "restAuthCredential.isEnabled": true,
+              "restAuthCredential.username": "[parameters('admin-username')]",
+              "restAuthCredential.password": "[parameters('admin-password')]"
+            },
+            "rserver":{
+              "rstudio": true
+            }      
+          }
+        },
+        "storageProfile": {
+          "storageaccounts": [
+            {
+              "name": "[concat(variables('storage-account-name'),'.blob.core.windows.net')]",
+              "isDefault": true,
+              "container": "[variables('hdinsight-container')]",
+              "key": "[listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value]"
+            }
+          ]
+        },
+        "computeProfile": {
+          "roles": [
+            {
+              "name": "headnode",
+              "targetInstanceCount": 2,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "workernode",
+              "targetInstanceCount": 4,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "zookeepernode",
+              "minInstanceCount": 1,
+              "targetInstanceCount": 3,
+              "hardwareProfile": { "vmSize": "Medium" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "edgenode",
+              "minInstanceCount": 1,
+              "targetInstanceCount": 1,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "type": "Microsoft.Sql/servers",
+      "name": "[variables('sql-server-name')]",
+      "location": "[variables('location')]",
+      "apiVersion": "[variables('sqldw-version')]",
+      "properties": {
+        "administratorLogin": "[parameters('admin-username')]",
+        "administratorLoginPassword": "[parameters('admin-password')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[variables('sqldw-name')]",
+          "type": "databases",
+          "location": "[variables('location')]",
+          "apiVersion": "[variables('sqldw-version')]",
+          "dependsOn": [
+            "[variables('sql-server-id')]"
+          ],
+          "properties": {
+            "edition": "DataWarehouse",
+            "collation": "SQL_LATIN1_GENERAL_CP1_CI_AS",
+            "requestedServiceObjectiveName": "DW100"
+          }
+        },
+        {
+          "type": "firewallrules",
+          "apiVersion": "[variables('sqldw-version')]",
+          "dependsOn": [
+            "[variables('sql-server-id')]"
+          ],
+          "location": "[variables('location')]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "hdicontainer": {
+      "type": "string",
+      "value": "[variables('hdinsight-container')]"
+    },
+    "sqlhost": {
+      "type": "string",
+      "value": "[reference(variables('sql-server-id'), variables('sqldw-version')).fullyQualifiedDomainName]"
+    },
+    "sqldatabase": {
+      "type": "string",
+      "value": "[variables('sqldw-name')]"
+    }
+  }
+}

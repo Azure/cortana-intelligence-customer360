@@ -1,0 +1,439 @@
+ {
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "admin-username": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin user name (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    },
+    "admin-password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    },
+    "adf-start-time": {
+      "type": "string",
+      "defaultValue": "2017-05-25T20:00:00Z"
+    },
+    "adf-end-time": {
+      "type": "string",
+      "defaultValue": "2017-05-26T22:00:00Z"
+    },
+    "pattern-asset-base-url": {
+      "type": "string",
+      "defaultValue": "https://bostondata.blob.core.windows.net/retail-360",
+      "metadata": { "description": "Base URL of app build" }
+    },
+    "webFarmName": {
+      "type": "string",
+      "defaultValue": "[concat('cust360', 'webplan', uniqueString(resourceGroup().id))]"
+    },
+    "webSiteName": {
+      "type": "string",
+      "defaultValue": "[concat('cust360', 'web', uniqueString(resourceGroup().id))]"
+    }
+  },
+  "variables": {
+    "unique": "[uniqueString(resourceGroup().id)]",
+    "location": "[resourceGroup().location]",
+    "storage-version": "2016-01-01",
+    "network-version": "2016-12-01",
+    "hdinsight-version": "2015-03-01-preview",
+    "sqldw-version": "2014-04-01-preview",
+    "datafactory-version": "2015-10-01",
+    "eventhub-version": "2015-08-01",
+    "stream-analytics-version": "2015-10-01",
+    "web-farm-version": "2016-09-01",
+    "web-site-version": "2016-08-01",
+    "prefix": "cust360",
+    "hdinsight-name": "[concat(variables('prefix'), '-hdi-', variables('unique'))]",
+    "hdinsight-id": "[resourceId('Microsoft.HDInsight/clusters', variables('hdinsight-name'))]",
+    "hdinsight-container": "[variables('hdinsight-name')]",
+    "storage-account-name": "[concat(variables('prefix'), 'stor', variables('unique'))]",
+    "storage-account-id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
+    "sql-server-name": "[concat('sqlserver', variables('unique'))]",
+		"sql-server-uri": "[concat(variables('sql-server-name'),'.database.windows.net')]",
+    "sql-server-id": "[resourceId('Microsoft.Sql/servers', variables('sql-server-name'))]",
+    "sqldw-name": "Customer360",
+		"sqldw-id": "[resourceId('Microsoft.Sql/servers/databases', variables('sql-server-name'), variables('sqldw-name'))]",
+    "datafactory-name": "[concat(variables('prefix'), 'df', variables('unique'))]",
+    "datafactory-id": "[resourceId('Microsoft.DataFactory/dataFactories', variables('datafactory-name'))]",
+    "eventhub-namespace-name": "[concat(variables('prefix'), 'ehns', variables('unique'))]",
+    "eventhub-namespace-id": "[resourceId('Microsoft.EventHub/namespaces', variables('eventhub-namespace-name'))]",
+    "eventhub-name": "[concat(variables('prefix'), 'eh', variables('unique'))]",
+    "eventhub-id": "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventhub-namespace-name'), variables('eventhub-name'))]",
+    "eventhub-key-name": "RootManageSharedAccessKey",
+    "eventhub-key-id": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventhub-namespace-name'), variables('eventhub-key-name'))]",
+    "stream-analytics-name": "[concat(variables('prefix'), 'sa', variables('unique'))]",
+    "stream-analytics-id": "[resourceId('Microsoft.StreamAnalytics/streamingjobs', variables('stream-analytics-name'))]",
+    "web-farm-name": "[parameters('webFarmName')]",
+    "web-farm-id": "[resourceId('Microsoft.Web/serverfarms', variables('web-farm-name'))]",
+    "web-site-name": "[parameters('webSiteName')]",
+    "web-site-id": "[resourceId('Microsoft.Web/sites', variables('web-site-name'))]",
+    "data-generator-url": "[concat(parameters('pattern-asset-base-url'), '/retail-360-data-generator-py34x86.zip')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DataFactory/dataFactories",
+      "name": "[variables('datafactory-name')]",
+      "location": "eastus",
+      "apiVersion": "[variables('datafactory-version')]",
+      "properties": { },
+      "resources": [
+        {
+          "type": "linkedservices",
+          "name": "AzureStorageLinkedService",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [ "[variables('datafactory-id')]" ],
+          "properties": {
+            "type": "AzureStorage",
+            "typeProperties": {
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage-account-name'), ';AccountKey=', listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value)]"
+            }
+          }
+        },
+        {
+          "type": "linkedservices",
+          "name": "HDInsightLinkedService",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [ 
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'AzureStorageLinkedService')]"
+          ],
+          "properties": {
+            "type": "HDInsight",
+            "typeProperties": {
+              "clusterUri": "[concat('https://', variables('hdinsight-name'), '.azurehdinsight.net/')]",
+              "userName": "[parameters('admin-username')]",
+              "password": "[parameters('admin-password')]",
+              "linkedServiceName": "AzureStorageLinkedService"
+            }
+          }
+        },
+        {
+          "type": "datasets",
+          "name": "InputDatasetETL",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'AzureStorageLinkedService')]"
+          ],
+          "properties": {
+            "published": false,
+            "type": "AzureBlob",
+            "linkedServiceName": "AzureStorageLinkedService",
+            "typeProperties": {
+                "folderPath": "[concat('/', variables('hdinsight-container'), '/{Year}/{Month}/{Day}/{Hour}/')]",
+                "partitionedBy": [
+                  {
+                    "name": "Year",
+                    "value": { "type": "DateTime", "date": "SliceStart", "format": "yyyy" }
+                  },
+                  {
+                    "name": "Month",
+                    "value": { "type": "DateTime", "date": "SliceStart", "format": "MM" }
+                  },
+                  {
+                    "name": "Day",
+                    "value": { "type": "DateTime", "date": "SliceStart", "format": "dd" }
+                  },
+                  {
+                    "name": "Hour",
+                    "value": { "type": "DateTime", "date": "SliceStart", "format": "HH" }
+                  }
+                ]
+            },
+            "availability": { "frequency": "Minute", "interval": 15 },
+            "external": true
+          }
+        },
+        {
+          "type": "datasets",
+          "name": "OutputDatasetETL",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [ 
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'AzureStorageLinkedService')]"
+          ],
+          "properties": {
+            "type": "AzureBlob",
+            "linkedServiceName": "AzureStorageLinkedService",
+            "typeProperties": {
+              "fileName": "sparkoutput-EA.txt",
+              "folderPath": "pyspark/pyFiles/output",
+              "format": { "type": "TextFormat", "columnDelimiter": "\t" }
+            },
+            "availability": { "frequency": "Minute", "interval": 15 }
+          }
+        },
+        {
+          "type": "datasets",
+          "name": "OutputDatasetScoring",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [ 
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'AzureStorageLinkedService')]"
+          ],
+          "properties": {
+            "type": "AzureBlob",
+            "linkedServiceName": "AzureStorageLinkedService",
+            "typeProperties": { "folderPath": "rspark" },
+            "availability": { "frequency": "Minute", "interval": 15 }
+          }
+        },
+        {
+          "type": "datapipelines",
+          "name": "datafactoryetl",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/datasets', variables('datafactory-name'), 'InputDatasetETL')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/datasets', variables('datafactory-name'), 'OutputDatasetETL')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'HDInsightLinkedService')]"
+          ],
+          "properties": {
+            "activities": [
+              {
+                  "type": "HDInsightSpark",
+                  "typeProperties": {
+                      "rootPath": "[concat(variables('hdinsight-container'), '/scripts')]",
+                      "entryFilePath": "etl_and_feature_engineering.py",
+                      "arguments": [
+                        "$$Text.Format('wasb:///{0:yyyy}/{0:MM}/{0:dd}/{0:HH}/{0:mm}',SliceStart)",
+                        "[concat(variables('sql-server-name'), '.database.windows.net:1433')]",
+                        "[variables('sqldw-name')]",
+                        "[parameters('admin-username')]",
+                        "[parameters('admin-password')]"
+                      ],
+                      "getDebugInfo": "Always"
+                  },
+                  "inputs": [ { "name": "InputDatasetETL" } ],
+                  "outputs": [ { "name": "OutputDatasetETL" } ],
+                  "policy": { "retry": 1, "concurrency": 1 },
+                  "scheduler": { "frequency": "Minute", "interval": 15 },
+                  "name": "MySparkActivity-EA",
+                  "linkedServiceName": "HDInsightLinkedService"
+              }
+            ],
+            "start": "[parameters('adf-start-time')]",
+            "end": "[parameters('adf-end-time')]",
+            "pipelineMode": "Scheduled",
+            "isPaused": false
+          }
+        },
+        {
+          "type": "datapipelines",
+          "name": "datafactoryscoring",
+          "apiVersion": "[variables('datafactory-version')]",
+          "dependsOn": [
+            "[variables('datafactory-id')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/datasets', variables('datafactory-name'), 'OutputDatasetETL')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/datasets', variables('datafactory-name'), 'OutputDatasetScoring')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'HDInsightLinkedService')]",
+            "[resourceId('Microsoft.DataFactory/datafactories/linkedservices', variables('datafactory-name'), 'AzureStorageLinkedService')]"
+          ],
+          "properties": {
+            "activities": [
+              {
+                "type": "HDInsightMapReduce",
+                "typeProperties": {
+                  "className": "com.adf.jobonhdi.JobOnHdiLauncher",
+                  "jarFilePath": "[concat(variables('hdinsight-container'), '/scripts/com.adf.adfjobonhdi.jar')]",
+                  "jarLinkedService": "AzureStorageLinkedService",
+                  "arguments": [
+                    "--files",
+                    "wasb:///scripts/com.adf.appsample.jar, wasb:///scripts/Scoring.R",
+                    "--command",
+                    "$$Text.Format('source /usr/lib64/microsoft-r/3.3/hadoop/RevoHadoopEnvVars.site; Revo64 CMD BATCH \"--args /Tree1 /data/final_enriched_profiles enriched_customer_profile.csv /{0:yyyy}/{0:MM}/{0:dd}/{0:HH}/{0:mm} \" Scoring.R /dev/stdout', SliceStart)"
+                  ]
+                },
+                "inputs": [ { "name": "OutputDatasetETL" } ],
+                "outputs": [ { "name": "OutputDatasetScoring" } ],
+                "policy": { "timeout": "00:30:00", "concurrency": 1, "retry": 1 },
+                "scheduler": { "frequency": "Minute", "interval": 15 },
+                "name": "HDInsight Job Launcher",
+                "description": "Submits a general HDInsight Job",
+                "linkedServiceName": "HDInsightLinkedService"
+              }
+            ],
+            "start": "[parameters('adf-start-time')]",
+            "end": "[parameters('adf-end-time')]",
+            "pipelineMode": "Scheduled",
+            "isPaused": false
+          }
+        }
+      ]
+    },
+    
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "name": "[variables('eventhub-namespace-name')]",
+      "apiVersion": "[variables('eventhub-version')]",
+      "location": "[variables('location')]",
+      "sku": { "name": "Standard", "tier": "Standard" },
+      "kind": "EventHub",
+      "properties": { },
+      "resources": [
+        {
+          "type": "eventhubs",
+          "name": "[variables('eventhub-name')]",
+          "apiVersion": "[variables('eventhub-version')]",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[variables('eventhub-namespace-id')]"
+          ],
+          "properties": {
+            "messageRetentionInDays": 1,
+            "partitionCount": 2,
+            "partitionIds": [ 0, 1 ] }
+        }
+      ]
+    },
+    
+    {
+      "type": "Microsoft.StreamAnalytics/streamingjobs",
+      "name": "[variables('stream-analytics-name')]",
+      "apiVersion": "[variables('stream-analytics-version')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": { "name": "Standard" },
+        "outputStartMode": "JobStartTime",
+        "eventsOutOfOrderPolicy": "Adjust",
+        "outputErrorPolicy": "Stop",
+        "eventsOutOfOrderMaxDelayInSeconds": 0,
+        "eventsLateArrivalMaxDelayInSeconds": 5,
+        "dataLocale": "en-US",
+        "compatibilityLevel": "1.0",
+        "inputs":[
+          {
+            "name": "readDataFromInput",
+            "properties": {
+              "type": "stream",
+              "serialization": { "type": "Json", "properties": { "encoding": "UTF8" } },
+              "dataSource": {
+                "type": "Microsoft.ServiceBus/EventHub",
+                "properties": {
+                  "eventHubName": "[variables('eventhub-name')]",
+                  "serviceBusNamespace": "[variables('eventhub-namespace-name')]",
+                  "sharedAccessPolicyName": "[variables('eventhub-key-name')]",
+                  "sharedAccessPolicyKey": "[listKeys(variables('eventhub-key-id'), variables('eventhub-version')).primaryKey]"
+                }
+              }
+            }
+          }
+        ],
+        "transformation": {
+          "name": "Transformation",
+          "properties": {
+            "streamingUnits": 1,
+            "query": "-- NOTE: ASA outputs columns in lower-case.\r\nSELECT\r\n   userdatetime,\r\n   customerid, \r\n   SUM(CAST(category_T1 AS FLOAT)) AS category_t1,\r\n   SUM(CAST(category_T2 AS FLOAT)) AS category_t2,\r\n   SUM(CAST(category_T3 AS FLOAT)) AS category_t3,\r\n   partitionid\r\nINTO\r\n    PipeDataToBlobInTimeSlices\r\nFROM\r\n    readDataFromInput\r\nGROUP BY userdatetime, customerid, partitionid, TumblingWindow(minute, 1)\r\n"
+          }
+        },
+        "outputs": [
+          {
+            "name": "PipeDataToBlobInTimeSlices",
+            "properties": {
+              "serialization": { "type": "Csv", "properties": { "fieldDelimiter": ",", "encoding": "UTF8" } },
+              "dataSource": {
+                "type": "Microsoft.Storage/Blob",
+                "properties": {
+                  "blobPathPrefix": "{date}/{time}",
+                  "storageAccounts": [{ "accountName": "[variables('storage-account-name')]", "accountKey": "[listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value]" }],
+                  "container": "[variables('hdinsight-container')]",
+                  "pathPattern": "{date}/{time}",
+                  "dateFormat": "yyyy/MM/dd",
+                  "timeFormat": "HH",
+                  "accountType": null
+                }
+              }
+            }
+          }
+        ]
+      }      
+    },
+    
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('web-farm-name')]",
+      "apiVersion": "[variables('web-farm-version')]",
+      "location": "[resourceGroup().location]",
+      "sku": {"name": "S1"},
+      "properties": { }
+    },
+    
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('web-site-name')]",
+      "apiVersion": "[variables('web-site-version')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [ 
+        "[variables('web-farm-id')]"
+      ],
+      "properties": {
+        "serverFarmId": "[variables('web-farm-id')]"
+      },
+      "resources": [
+        {
+          "type": "extensions",
+          "name": "MSDeploy",
+          "apiVersion": "[variables('web-site-version')]",
+          "dependsOn": [
+            "[variables('web-site-id')]"
+          ],
+          "properties": {
+            "packageUri": "[variables('data-generator-url')]",
+            "dbType": "None",
+            "connectionString": ""
+          }
+        },
+        {
+          "type": "config",
+          "name": "logs",
+          "apiVersion": "[variables('web-site-version')]",
+          "dependsOn": [ 
+            "[variables('web-site-id')]",
+            "[resourceId('Microsoft.Web/sites/extensions', variables('web-site-name'), 'MSDeploy')]"
+          ],
+          "properties": {
+            "applicationLogs": { "fileSystem": { "level": "Verbose" } }
+          }
+        },
+        {
+          "type": "config",
+          "name": "web",
+          "apiVersion": "[variables('web-site-version')]",
+          "dependsOn": [ 
+            "[variables('web-site-id')]",
+            "[resourceId('Microsoft.Web/sites/config', variables('web-site-name'), 'logs')]"
+          ],
+          "properties": {
+            "alwaysOn": true,
+            "pythonVersion": "3.4"
+          }
+        },
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "[variables('web-site-version')]",
+          "dependsOn": [ 
+            "[variables('web-site-id')]",
+            "[resourceId('Microsoft.Web/sites/config', variables('web-site-name'), 'web')]"
+          ],
+          "properties": {
+            "PYTHONPATH": "./lib",
+            "EVENTHUB_NAMESPACE": "[variables('eventhub-namespace-name')]",
+            "EVENTHUB_NAME": "[variables('eventhub-name')]",
+            "EVENTHUB_KEY_NAME": "[variables('eventhub-key-name')]",
+            "EVENTHUB_KEY": "[listKeys(variables('eventhub-key-id'), variables('eventhub-version')).primaryKey]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage-account-name'), ';AccountKey=', listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value)]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storage-account-name'), ';AccountKey=', listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value)]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": { }
+}

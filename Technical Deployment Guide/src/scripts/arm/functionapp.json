@@ -1,0 +1,63 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "uniqueString": "[uniqueString(concat(subscription().subscriptionId, resourceGroup().name))]",
+    "functionAppName": "[concat('functions-', variables('uniqueString'))]",
+    "servicePlanName": "[concat('hosting', variables('uniqueString'))]"
+  },
+  "parameters": {
+    "siteConfig": {
+      "type": "object"
+    },
+    "servicePlanSku": {
+      "type": "string"
+    },
+    "servicePlanTier": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-08-01",
+      "name": "[variables('servicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('servicePlanSku')]",
+        "tier": "[parameters('servicePlanTier')]",
+        "capacity": 1
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[variables('functionAppName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]",
+        "siteConfig": "[parameters('siteConfig')]",
+        "containerSize": 128
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "functionAppName": {
+      "type": "string",
+      "value": "[variables('functionAppName')]"
+    },
+    "functionAppBaseUrl": {
+      "type": "string",
+      "value": "[concat('https://', variables('functionAppName'), '.azurewebsites.net/api/')]"
+    },
+    "servicePlanName": {
+      "type": "string",
+      "value": "[variables('servicePlanName')]"
+    }
+  }
+}
