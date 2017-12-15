@@ -34,7 +34,7 @@ This deployment has six steps. Due to ADF dependencies on pre-loaded sample data
  
 >  -  **Admin username and password** 
 
-- **STEP 1** - Checkout [this repository][LINK_GH] to a location on your machine. 
+- **STEP 1** - Clone [this repository][LINK_GH] to a location on your machine. 
 
 - **STEP 2** - Launch Windows PowerShell application and navigate to the location the code was checked out. 
 
@@ -148,6 +148,6 @@ Azure Storage (HDFS compatible storage) will be the backing storage for the HDIn
     
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
-[LINK_SCRIPTS]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution/tree/master/src
-[LINK_GH]: https://github.com/Azure/cortana-intelligence-customer-profile-enrichment-solution 
+[LINK_SCRIPTS]: https://github.com/Azure/cortana-intelligence-customer360/tree/master/Technical%20Deployment%20Guide/src/scripts
+[LINK_GH]: https://github.com/Azure/cortana-intelligence-customer360 
  
