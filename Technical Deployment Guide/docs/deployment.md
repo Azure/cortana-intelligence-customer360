@@ -1,5 +1,5 @@
-# Deployment
-You will be creating the following resources. 
+# Manual Deployment
+You will be creating the following resources:
 
 - **Microsoft R Server** - Highly scalable platform that extends the analytic capabilities of R.
 
@@ -15,135 +15,83 @@ You will be creating the following resources.
 
 - **Azure Data Factory (ADF)** - Data pipeline orchestrator, connects to both on-prem and in-cloud sources and allows data lineage visualizations.
 
-- **Azure Functions/WebApp** - Process events with serverless code.
+- **Azure Functions App/WebApp** - Process events with serverless code.
 
 - **PowerBI** - Fully interactive data visualizations.
 
-**Entire manual set-up takes about 40 minutes.**
+**Entire manual set-up takes about 20-30 minutes.**
 
-### Manual Deployment
-**All scripts used in the following deployment steps are available in the github repository, [src/scripts][LINK_SCRIPTS]** 
+### Deployment Steps
+**All scripts used in the following deployment steps are available in the GitHub repository, [src/scripts][LINK_SCRIPTS]** 
 
 Create, configure and deploy all required Azure resources **(ARM)** using PowerShell.
 
 > Follow this tutorial to install [PowerShell][LINK_PS]
 
-This deployment has six steps. Due to ADF dependencies on pre-loaded sample data and jar files (for HDInsight activities for ETL and Scoring) you will need to create **two** configuration parameters for all resource login credentials.
+Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activities for ETL and Scoring) you will need to create **two** configuration parameters for all resource login credentials.
 
->  Admin username and password. 
+1. Admin username
+1. Password 
  
->  -  **Admin username and password** 
 
 - **STEP 1** - Clone [this repository][LINK_GH] to a location on your machine. 
 
-- **STEP 2** - Launch Windows PowerShell application and navigate to the location the code was checked out. 
-
-- **STEP 3** - Deploy Azure Storage and HDInsight clusters.
-Azure Storage (HDFS compatible storage) will be the backing storage for the HDInsight cluster. The deployed HDInsight cluster will be a Spark and MRS cluster.
+- **STEP 2** - Launch Windows PowerShell application and navigate to the **script/arm** folder of the repository.
+ 
+- **STEP 3** - Connect to Azure, set what subscription to use and create a resource group to deploy your azure resources.   
+	
+    ```Powershell
+    Login-AzureRmAccount
+    Select-AzureRmSubscription -SubscriptionId <subscription_id>
+    New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>
+	```
+	> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)  
+	
+- **STEP 4** - Deploy an Azure Function App
+Azure Functions will be used for setup and orchestration of your entire solution. 
 
     ```PowerShell
-    $adminUsername = <your_admin_username>
-    $adminPassword = convertto-securestring <your_password_string> -asplaintext -force
-    $rg = "customer-profile-enrichment"
-    $loc = "EastUS"
-    New-AzureRmResourceGroup $rg $loc -Force 
-    New-AzureRmResourceGroupDeployment -Name CreateStorageAndHDI -ResourceGroupName $rg -TemplateFile src/scripts/azuredeploy_init.json -admin-username $adminUsername -admin-password $adminPassword -verbose
+    $templatePath = "functionapp.json"
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
     ```  
-    Note the following outputs:
-    - Storage name
-    - Storage key
-    - HDInsight blob container name
-
-- **STEP 4** - Copy sample data and dependencies libraries to blob using outputs from first deployment. 
-	```PowerShell
-	$storage = <storage_account_name>
-	$storagekey = <storage_account_key>
-	$hdicontainer = <hdicontainer_name>
+    ** MANUAL STEPS AFTER FUNCTION DEPLOY**  
+    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App File System. 
+    2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.
     
-    .src/scripts/copy-blobs $storage $storagekey $hdicontainer
-    ```
+    ```csharp
+    public class Inputs {  
+          public string PatternAssetBaseUrl { get; set; }
+          public string Username { get; set; }
+          public string Password { get; set; }
+          public string Storage { get; set; }
+          public string StorageKey { get; set; }
+          public string HdiContainer { get; set; }
+          public string SqlHost { get; set; }
+          public string SqlDatabase { get; set; }
+    }
+	```
+    > NOTE: The value for **PatternAssetBaseUrl** is  https://ciqsdatastorage.blob.core.windows.net/customer-360`  
 
-- **STEP 5** - Deploy remaining ARM resources like Azure SQL DW, ADF and so on 
-	```PowerShell
-    $start_time = [DateTime]::UtcNow
-	$end_time = $start_time.add([TimeSpan]::FromHours(2))
-	$params['ADFStartTime'] = $start_time.ToString('o')
-	$params['ADFEndTime'] = $end_time.ToString('o')	
+- **STEP 5** - Deploy other resources. 
+Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the following JSON templates in the following order:  
+	> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).   
+
+	- **01.json**  
+    ```PowerShell
+    $templatePath = "01.json"
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
+    ```
     
-    New-AzureRmResourceGroupDeployment -Name DeployAllResources -ResourceGroupName $rg -TemplateFile src/scripts/azuredeploy_sll.json -admin-username $adminUsername -admin-password $adminPassword -TemplateParameterObject $params -verbose
+    - **02.json**  
+    ```PowerShell
+    $templatePath = "02.json"
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
     ```
-
-- **STEP 6** - Create Azure SQL DW internal tables for referential data and external table for final enriched profiles. 
-	
-    ```PowerShell  
-		[CmdletBinding()]
-        Param(
-
-          [Parameter(Mandatory=$True, Position=1)]
-          [string]$SqlServerHost,
-
-          [Parameter(Mandatory=$True, Position=2)]
-          [string]$SqlServerUser,
-
-          [Parameter(Mandatory=$True, Position=3)]
-          [string]$SqlServerPassword,
-
-          [Parameter(Mandatory=$True, Position=4)]
-          [string]$CredentialIdentity,
-
-          [Parameter(Mandatory=$True, Position=5)]
-          [string]$CredentialSecret,
-
-          [Parameter(Mandatory=$True, Position=6)]
-          [string]$HDIStorageContainer,
-
-          [Parameter(Mandatory=$True, Position=7)]
-          [string]$StorageAccount,
-
-          [Parameter(Mandatory=$True, Position=8)]
-          [string]$Database,
-
-          [Parameter(Mandatory=$True, Position=9)]
-          [string]$MasterKey,
-
-          [string]$CustomerProfileBlobPath = "/data/final_enriched_profiles/enriched_customer_profile.csv"
-        )
-
-        $vars = @{
-          CREDENTIAL_IDENTITY = $CredentialIdentity;
-          CREDENTIAL_SECRET = $CredentialSecret;
-          HDI_STORAGE_CONTAINER = $HDIStorageContainer;
-          STORAGE_ACCOUNT = $StorageAccount;
-          CUSTOMER_PROFILE_BLOB_PATH = $CustomerProfileBlobPath;
-          MASTER_KEY = $MasterKey;
-        }
-
-        function Replace-Vars([string]$text) {
-          [regex]$pattern = "\$\(([^)]+)\)"
-          $replace = { $vars[$args[0].Groups[1].Value] }
-          return $pattern.Replace($text, $replace)
-        }
-
-        function Exec-Sql([string]$sql) {
-          sqlcmd -S $SqlServerHost -U $SqlServerUser -P $SqlServerPassword -d $Database -I -Q "$sql"
-        }
-
-        function Exec-SqlFile([string]$path) {
-          $sql = Replace-Vars (Get-Content $path)
-          $temp = [IO.Path]::GetTempFileName()
-          $sql | Out-File $temp
-          sqlcmd -S $SqlServerHost -U $SqlServerUser -P $SqlServerPassword -d $Database -I -i $temp
-          Remove-Item $temp
-        }
-
-        Exec-SqlFile "src/scripts/credentials/MasterKey.sql"
-        Exec-SqlFile "src/scripts/credentials/BlobStorageCredential.sql"
-        Exec-SqlFile "src/scripts/external-data-sources/AzureBlob.sql"
-        Exec-SqlFile "src/scripts/external-file-formats/CSVFormat.sql"
-        Exec-SqlFile "src/scripts/external-tables/dbo.Enriched_Customer_Profile_Blob.sql"
-        Exec-SqlFile "src/scripts/tables/dbo.Customer.sql"
-        Exec-SqlFile "src/scripts/tables/dbo.Product.sql"
-        Exec-SqlFile "src/scripts/tables/dbo.Purchase.sql"
+    
+    - **03.json** 
+    ```PowerShell
+    $templatePath = "03.json"
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
     ```
     
  <!-- Links -->
