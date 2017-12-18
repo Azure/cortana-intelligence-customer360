@@ -40,14 +40,14 @@ Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activ
  
 - **STEP 3** - Connect to Azure, set what subscription to use and create a resource group to deploy your azure resources.   
 	
-    ```Powershell
+   ```Powershell
     Login-AzureRmAccount
     Select-AzureRmSubscription -SubscriptionId <subscription_id>
-    New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>
-	```
+    New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>  
+    ```
 	> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)  
 	
-- **STEP 4** - Deploy an Azure Storage Account  
+- **STEP 4** - Deploy an Azure Storage Account   
 ```Powershell
 $templateFilePath = "storage.json"
 New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose
@@ -76,15 +76,16 @@ This is the storage for the entire solution.
 - **STEP 5** - Deploy an Azure Function App  
 Azure Functions will be used for setup and orchestration of your entire solution. 
 - Open `functionparameters.json` and replace **AccountName** and **AccountKey** with the values copied from the Azure Storage Account deployment step. Save file and close.  
-- Deploy the Function App using the parameters file that contains information for the Webfarm which will be set to `alwaysOn`. 
-	```PowerShell
+- Deploy the Function App using the parameters file that contains information for the Webfarm which will be set to `alwaysOn`.   
+	
+	```Powershell
 	$templateFilePath = "functionapp.json"
 	$parametersFilePath = "functionparameters.json"
 	New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath -Verbose
 	```  
 The function app should be successfully deployed now. 
 
-	```PowerShell
+	```Powershell
 	DeploymentName          : functionapp
 	ResourceGroupName       : <resource_group_name>
 	ProvisioningState       : Succeeded
@@ -127,13 +128,21 @@ The function app should be successfully deployed now.
 
 
 
-	```
+	```  
+	
+   **MANUAL STEPS AFTER FUNCTION DEPLOY**  
+    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system.
+    	- Go to [Azure](https://portal.azure.com)
+	- Locate your resource group.
+	- Click the newly created function app (**App Service**).
+	- Under Functions, click the **+** sign to create a new custom function.
+	- Select **HTTP trigger** function. Change language to C#, change the name to **configure** and set **Authorization level** to Anonymous. 
+	- Delete `run.csx` and replace the contents of `function.json` with that on your local machine as it cannot be deleted. 
+	- Upload all the rest of the files under **configure** directory to the Function App.  
+	
+   2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.  
     
-    **MANUAL STEPS AFTER FUNCTION DEPLOY**  
-    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system. 
-    2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.
-    
-    ```csharp
+    ```CSharp
     public class Inputs {  
           public string PatternAssetBaseUrl { get; set; }
           public string Username { get; set; }
@@ -144,7 +153,7 @@ The function app should be successfully deployed now.
           public string SqlHost { get; set; }
           public string SqlDatabase { get; set; }
     }
-	```
+```
     > NOTE: The value for **PatternAssetBaseUrl** should be https://ciqsdatastorage.blob.core.windows.net/customer-360  
 
 - **STEP 5** - Deploy other resources  
@@ -152,21 +161,15 @@ Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the fol
 	> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).   
 
 	- **01.json**  
-    ```PowerShell
+    ```Powershell
     $templatePath = "01.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
     ```
     
     - **02.json**  
-    ```PowerShell
+    ```Powershell
     $templatePath = "02.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 2" -TemplateUri $templatePath 
-    ```
-    
-    - **03.json** 
-    ```PowerShell
-    $templatePath = "03.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 3" -TemplateUri $templatePath 
     ```
     
  <!-- Links -->
