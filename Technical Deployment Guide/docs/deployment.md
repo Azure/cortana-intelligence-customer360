@@ -47,13 +47,87 @@ Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activ
 	```
 	> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)  
 	
-- **STEP 4** - Deploy an Azure Function App  
-Azure Functions will be used for setup and orchestration of your entire solution. 
+- **STEP 4** - Deploy an Azure Storage Account  
+```Powershell
+$templateFilePath = "storage.json"
+New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose
+```  
 
-    ```PowerShell
-    $templatePath = "functionapp.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Create Function App" -TemplateUri $templatePath 
-    ```  
+A successful deployment will output the storage account name and key. Make a note of these two keys.  
+```Powershell
+DeploymentName          : storage
+ResourceGroupName       : <resource_group_name>
+ProvisioningState       : Succeeded
+Timestamp               : 12/18/2017 6:48:04 PM
+Mode                    : Incremental
+TemplateLink            :
+Parameters              :
+Outputs                 :
+                          Name             Type                       Value
+                          ===============  =========================  ==========
+                          storageAccountName  String                   <storage_name>
+                          storageAccountKey  String                    <storage_key>
+
+DeploymentDebugLogLevel :
+```  
+
+This is the storage for the entire solution.   
+
+- **STEP 5** - Deploy an Azure Function App  
+Azure Functions will be used for setup and orchestration of your entire solution. 
+- Open `functionparameters.json` and replace **AccountName** and **AccountKey** with the values copied from the Azure Storage Account deployment step. Save file and close.  
+- Deploy the Function App using the parameters file that contains information for the Webfarm which will be set to `alwaysOn`. 
+	```PowerShell
+	$templateFilePath = "functionapp.json"
+	$parametersFilePath = "functionparameters.json"
+	New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath -Verbose
+	```  
+The function app should be successfully deployed now. 
+
+	```PowerShell
+	DeploymentName          : functionapp
+	ResourceGroupName       : <resource_group_name>
+	ProvisioningState       : Succeeded
+	Timestamp               : 12/18/2017 9:13:51 PM
+	Mode                    : Incremental
+	TemplateLink            :
+	Parameters              :
+				  Name             Type                       Value
+				  ===============  =========================  ==========
+				  siteConfig       Object                     {
+				    "alwaysOn": true,
+				    "use32BitWorkerProcess": true,
+				    "appSettings": [
+				      {
+					"Name": "FUNCTIONS_EXTENSION_VERSION",
+					"Value": "latest"
+				      },
+				      {
+					"Name": "AzureWebJobsStorage",
+					"Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+				      },
+				      {
+					"Name": "AzureWebJobsDashboard",
+					"Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+				      }
+				    ],
+				    "connectionStrings": null
+				  }
+				  servicePlanSku   String                     S1
+				  servicePlanTier  String                     Standard
+
+	Outputs                 :
+				  Name             Type                       Value
+				  ===============  =========================  ==========
+				  functionAppName  String                     <function_name>
+				  functionAppBaseUrl  String                  https://<function_name>.azurewebsites.net/api/
+				  servicePlanName  String                     <hosting_plan_name>
+
+	DeploymentDebugLogLevel :
+
+
+
+	```
     
     **MANUAL STEPS AFTER FUNCTION DEPLOY**  
     1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system. 
