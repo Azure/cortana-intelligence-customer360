@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteConfig": {
+            "value": {
+                "alwaysOn": true,
+                "use32BitWorkerProcess": true,
+                "appSettings": [
+                    {
+                        "Name": "FUNCTIONS_EXTENSION_VERSION",
+                        "Value": "latest"
+                    },
+                    {
+                        "Name": "AzureWebJobsStorage",
+                        "Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+                    },
+                    {
+                        "Name": "AzureWebJobsDashboard",
+                        "Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+                    }
+                ],
+                "connectionStrings": null
+            }
+        },
+        "servicePlanSku": {
+            "value": "S1"
+        },
+        "servicePlanTier": {
+            "value": "Standard"
+        }
+    }
+}
