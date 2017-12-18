@@ -129,7 +129,7 @@ The function app should be successfully deployed now.
 	DeploymentDebugLogLevel :
 	```  
 	
-    **MANUAL STEPS AFTER FUNCTION DEPLOY**  
+   **MANUAL STEPS AFTER FUNCTION DEPLOY**  
 
     1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system.
         - Go to [Azure](https://portal.azure.com)
@@ -142,35 +142,36 @@ The function app should be successfully deployed now.
 
     2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.  
 
-        ```Powershell
-        public class Inputs {  
-              public string PatternAssetBaseUrl { get; set; }
-              public string Username { get; set; }
-              public string Password { get; set; }
-              public string Storage { get; set; }
-              public string StorageKey { get; set; }
-              public string HdiContainer { get; set; }
-              public string SqlHost { get; set; }
-              public string SqlDatabase { get; set; }
-        }
-        ```  
+	```
+	public class Inputs {  
+	      public string PatternAssetBaseUrl { get; set; }
+	      public string Username { get; set; }
+	      public string Password { get; set; }
+	      public string Storage { get; set; }
+	      public string StorageKey { get; set; }
+	      public string HdiContainer { get; set; }
+	      public string SqlHost { get; set; }
+	      public string SqlDatabase { get; set; }
+	}
+	```  
 
-    > NOTE: The value for **PatternAssetBaseUrl** should be https://ciqsdatastorage.blob.core.windows.net/customer-360  
+   > NOTE: The value for **PatternAssetBaseUrl** should be https://ciqsdatastorage.blob.core.windows.net/customer-360  
 
 - **STEP 5** - Deploy other resources  
 Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the following JSON templates in the following order:  
 	> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).   
 
    - **01.json**      
-    ```Powershell
+    ```
     $templatePath = "01.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
-    ```    
-    - **02.json**   
-    ```Powershell
+    ```  
+    
+    - **02.json**  
+    ```
     $templatePath = "02.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 2" -TemplateUri $templatePath 
-    ```  
+    ```
     
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
