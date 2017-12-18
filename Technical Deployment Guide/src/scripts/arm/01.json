@@ -1,7 +1,20 @@
  {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": { },
+  "parameters": {
+    "admin-username": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin user name (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    },
+    "admin-password": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin password (used for all services, i.e. HDInsight and Azure SQL DW)"
+      }
+    }
+  },
   "variables": {
     "unique": "[uniqueString(resourceGroup().id)]",
     "location": "[resourceGroup().location]",
@@ -18,6 +31,9 @@
     "hdinsight-name": "[concat(variables('prefix'), '-hdi-', variables('unique'))]",
     "hdinsight-id": "[resourceId('Microsoft.HDInsight/clusters', variables('hdinsight-name'))]",
     "hdinsight-container": "[variables('hdinsight-name')]",
+    "hdinsight-os-profile": {
+      "linuxOperatingSystemProfile": { "username": "[parameters('admin-username')]", "password": "[parameters('admin-password')]" }
+    },
     "storage-account-name": "[concat(variables('prefix'), 'stor', variables('unique'))]",
     "storage-account-id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]",
     "sql-server-name": "[concat('sqlserver', variables('unique'))]",
@@ -42,23 +58,123 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storage-account-name')]",
-      "apiVersion": "[variables('storage-version')]",
+      "type": "Microsoft.HDInsight/clusters",
+      "name": "[variables('hdinsight-name')]",
+      "apiVersion": "[variables('hdinsight-version')]",
       "location": "[variables('location')]",
-      "sku": { "name": "Standard_LRS" },
-      "kind": "Storage",
-      "properties": { }
+      "properties": {
+        "clusterVersion": "3.5",
+        "osType": "Linux",
+        "tier": "standard",
+        "clusterDefinition": {
+          "kind": "rserver",
+          "configurations": {
+            "gateway": {
+              "restAuthCredential.isEnabled": true,
+              "restAuthCredential.username": "[parameters('admin-username')]",
+              "restAuthCredential.password": "[parameters('admin-password')]"
+            },
+            "rserver":{
+              "rstudio": true
+            }      
+          }
+        },
+        "storageProfile": {
+          "storageaccounts": [
+            {
+              "name": "[concat(variables('storage-account-name'),'.blob.core.windows.net')]",
+              "isDefault": true,
+              "container": "[variables('hdinsight-container')]",
+              "key": "[listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value]"
+            }
+          ]
+        },
+        "computeProfile": {
+          "roles": [
+            {
+              "name": "headnode",
+              "targetInstanceCount": 2,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "workernode",
+              "targetInstanceCount": 4,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "zookeepernode",
+              "minInstanceCount": 1,
+              "targetInstanceCount": 3,
+              "hardwareProfile": { "vmSize": "Medium" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            },
+            {
+              "name": "edgenode",
+              "minInstanceCount": 1,
+              "targetInstanceCount": 1,
+              "hardwareProfile": { "vmSize": "Standard_D12_v2" },
+              "osProfile": "[variables('hdinsight-os-profile')]"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "type": "Microsoft.Sql/servers",
+      "name": "[variables('sql-server-name')]",
+      "location": "[variables('location')]",
+      "apiVersion": "[variables('sqldw-version')]",
+      "properties": {
+        "administratorLogin": "[parameters('admin-username')]",
+        "administratorLoginPassword": "[parameters('admin-password')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[variables('sqldw-name')]",
+          "type": "databases",
+          "location": "[variables('location')]",
+          "apiVersion": "[variables('sqldw-version')]",
+          "dependsOn": [
+            "[variables('sql-server-id')]"
+          ],
+          "properties": {
+            "edition": "DataWarehouse",
+            "collation": "SQL_LATIN1_GENERAL_CP1_CI_AS",
+            "requestedServiceObjectiveName": "DW100"
+          }
+        },
+        {
+          "type": "firewallrules",
+          "apiVersion": "[variables('sqldw-version')]",
+          "dependsOn": [
+            "[variables('sql-server-id')]"
+          ],
+          "location": "[variables('location')]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        }
+      ]
     }
   ],
   "outputs": {
-    "storageAccountName": {
+    "hdicontainer": {
       "type": "string",
-      "value": "[variables('storage-account-name')]"
+      "value": "[variables('hdinsight-container')]"
     },
-    "storageAccountKey": {
+    "sqlhost": {
       "type": "string",
-      "value": "[listKeys(variables('storage-account-id'), variables('storage-version')).keys[0].value]"
+      "value": "[reference(variables('sql-server-id'), variables('sqldw-version')).fullyQualifiedDomainName]"
+    },
+    "sqldatabase": {
+      "type": "string",
+      "value": "[variables('sqldw-name')]"
     }
   }
 }
