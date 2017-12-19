@@ -34,21 +34,25 @@ Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activ
 1. Password 
  
 
-- **STEP 1** - Clone [this repository][LINK_GH] to a location on your machine. 
+##### STEP 1
+Clone [this repository][LINK_GH] to a location on your machine. 
 
-- **STEP 2** - Launch Windows PowerShell application and navigate to the **script/arm** folder of the repository.
+##### STEP 2
+Launch Windows PowerShell application and navigate to the **script/arm** folder of the repository.
  
-- **STEP 3** - Connect to Azure, set what subscription to use and create a resource group to deploy your azure resources.   
+##### STEP 3
+Connect to Azure, set what subscription to use and create a resource group to deploy your azure resources.   
 	
-   ```Powershell
-    Login-AzureRmAccount
-    Select-AzureRmSubscription -SubscriptionId <subscription_id>
-    New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>  
-    ```  
-    
-> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)  
-	
-- **STEP 4** - Deploy an Azure Storage Account   
+```Powershell
+Login-AzureRmAccount
+Select-AzureRmSubscription -SubscriptionId <subscription_id>
+New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>  
+```  
+
+> NOTE: Ensure the chosen location is valid for all resources highlighted above. Find information [here](https://azure.microsoft.com/en-us/status/)   
+
+##### STEP 4
+Deploy an Azure Storage Account   
 
 ```Powershell
 $templateFilePath = "storage.json"
@@ -74,104 +78,128 @@ DeploymentDebugLogLevel :
 ```  
 
 This is the storage for the entire solution.   
-
-- **STEP 5** - Deploy an Azure Function App  
-Azure Functions will be used for setup and orchestration of your entire solution. 
-	- Open `functionparameters.json` and replace **AccountName** and **AccountKey** with the values copied from the Azure Storage Account deployment step. Save file and close.  
-	- Deploy the Function App using the parameters file that contains information for the Webfarm which will be set to `alwaysOn`.   
-	
-	```Powershell
-	$templateFilePath = "functionapp.json"
-	$parametersFilePath = "functionparameters.json"
-	New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath -Verbose
-	```  
-The function app should be successfully deployed now. 
-
-	```Powershell
-	DeploymentName          : functionapp
-	ResourceGroupName       : <resource_group_name>
-	ProvisioningState       : Succeeded
-	Timestamp               : 12/18/2017 9:13:51 PM
-	Mode                    : Incremental
-	TemplateLink            :
-	Parameters              :
-				  Name             Type                       Value
-				  ===============  =========================  ==========
-				  siteConfig       Object                     {
-				    "alwaysOn": true,
-				    "use32BitWorkerProcess": true,
-				    "appSettings": [
-				      {
-					"Name": "FUNCTIONS_EXTENSION_VERSION",
-					"Value": "latest"
-				      },
-				      {
-					"Name": "AzureWebJobsStorage",
-					"Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
-				      },
-				      {
-					"Name": "AzureWebJobsDashboard",
-					"Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
-				      }
-				    ],
-				    "connectionStrings": null
-				  }
-				  servicePlanSku   String                     S1
-				  servicePlanTier  String                     Standard
-
-	Outputs                 :
-				  Name             Type                       Value
-				  ===============  =========================  ==========
-				  functionAppName  String                     <function_name>
-				  functionAppBaseUrl  String                  https://<function_name>.azurewebsites.net/api/
-				  servicePlanName  String                     <hosting_plan_name>
-
-	DeploymentDebugLogLevel :
-	```  
-	
-   **MANUAL STEPS AFTER FUNCTION DEPLOY**  
-
-    1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system.
-        - Go to [Azure](https://portal.azure.com)
-        - Locate your resource group.
-        - Click the newly created function app (**App Service**).
-        - Under Functions, click the **+** sign to create a new custom function.
-        - Select **HTTP trigger** function. Change language to C#, change the name to **configure** and set **Authorization level** to Anonymous. 
-        - Delete `run.csx` and replace the contents of `function.json` with that on your local machine as it cannot be deleted. 
-        - Upload all the rest of the files under **configure** directory to the Function App.  
-
-    2. Call the Function app, via HTTP POST, using JSON input that conforms to the object found inside `input.csx` as shown below.  
-
-	```
-	public class Inputs {  
-	      public string PatternAssetBaseUrl { get; set; }
-	      public string Username { get; set; }
-	      public string Password { get; set; }
-	      public string Storage { get; set; }
-	      public string StorageKey { get; set; }
-	      public string HdiContainer { get; set; }
-	      public string SqlHost { get; set; }
-	      public string SqlDatabase { get; set; }
-	}
-	```  
-
-   > NOTE: The value for **PatternAssetBaseUrl** should be https://ciqsdatastorage.blob.core.windows.net/customer-360  
-
-- **STEP 5** - Deploy other resources  
+##### STEP 5
+Deploy resources  
 Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the following JSON templates in the following order:  
-	> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).   
+	
+> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).  
 
-   - **01.json**      
-    ```
-    $templatePath = "01.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
-    ```  
+- **Deploy Resources**      
+```Powershell
+$templatePath = "deployresources.json"
+New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
+```      
     
-    - **02.json**  
-    ```
-    $templatePath = "02.json"
+ 
+##### STEP 6
+Deploy an Azure Function App  
+Azure Functions will be used for setup and orchestration of your entire solution.  
+
+- Open `functionparameters.json` and replace **AccountName** and **AccountKey** with the values copied from the Azure Storage Account deployment step. Save file and close.  
+
+- Deploy the Function App using the parameters file that contains information for the Webfarm which will be set to `alwaysOn`.   
+	
+```Powershell
+$templateFilePath = "functionapp.json"
+$parametersFilePath = "functionparameters.json"
+New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath -Verbose
+```  
+
+The function app should be successfully deployed now.  
+
+```Powershell
+DeploymentName          : functionapp
+ResourceGroupName       : <resource_group_name>
+ProvisioningState       : Succeeded
+Timestamp               : 12/18/2017 9:13:51 PM
+Mode                    : Incremental
+TemplateLink            :
+Parameters              :
+              Name             Type                       Value
+              ===============  =========================  ==========
+              siteConfig       Object                     {
+                "alwaysOn": true,
+                "use32BitWorkerProcess": true,
+                "appSettings": [
+                  {
+                "Name": "FUNCTIONS_EXTENSION_VERSION",
+                "Value": "latest"
+                  },
+                  {
+                "Name": "AzureWebJobsStorage",
+                "Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+                  },
+                  {
+                "Name": "AzureWebJobsDashboard",
+                "Value": "DefaultEndpointsProtocol=https;AccountName=<storage_account_name>;AccountKey=<storage_account_key>"
+                  }
+                ],
+                "connectionStrings": null
+              }
+              servicePlanSku   String                     S1
+              servicePlanTier  String                     Standard
+
+Outputs                 :
+              Name             Type                       Value
+              ===============  =========================  ==========
+              functionAppName  String                     <function_name>
+              functionAppBaseUrl  String                  https://<function_name>.azurewebsites.net/api/
+              servicePlanName  String                     <hosting_plan_name>
+
+DeploymentDebugLogLevel :
+```  
+	
+**MANUAL STEPS AFTER FUNCTION DEPLOY**  
+
+1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system.
+    - Go to [Azure](https://portal.azure.com)
+    - Locate your resource group.
+    - Click the newly created function app (**App Service**).
+    - Under Functions, click the **+** sign to create a new custom function.
+    - Select **HTTP trigger** function. Change language to C#, change the name to **configure** and set **Authorization level** to **Anonymous**. 
+    - Overwrite `run.csx`, `function.json` with the content on your local repo.
+    - Upload all the rest of the files under **configure** directory to the Function App.  
+
+2. To activate the HTTP triggered function, send a HTTP POST request, using JSON input that conforms to the object found inside `input.csx` as shown below.  
+
+```cs
+public class Inputs {  
+      public string PatternAssetBaseUrl { get; set; }
+      public string Username { get; set; }
+      public string Password { get; set; }
+      public string Storage { get; set; }
+      public string StorageKey { get; set; }
+      public string HdiContainer { get; set; }
+      public string SqlHost { get; set; }
+      public string SqlDatabase { get; set; }
+}
+```
+A sample JSON would look like this.  
+
+```json
+{
+    "PatternAssetBaseUrl": "https://ciqsdatastorage.blob.core.windows.net/customer-360",
+    "Username": "your username",
+    "Password": "your password",
+    "Storage": "your storage account name",
+    "StorageKey" : "your storage account key",
+    "HdiContainer": "your hdi container",
+    "SqlHost": "sql local host",
+    "SqlDatabase": "Customer360" 
+
+}
+```
+
+> NOTE: All these values are outputs of the previous ARM deployment steps.  
+
+##### STEP 7
+Deploy the ADF pipelines
+    
+- **Deploy ADF Pipelines**   
+    ```Powershell
+    $templatePath = "deploypipelines.json"
     New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 2" -TemplateUri $templatePath 
-    ```
+    ```  
     
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
