@@ -1,4 +1,6 @@
 # Manual Deployment
+These steps describe how you can manually deploy the Customer 360 solution. This will enable you to customize the solution as needed.  
+
 You will be creating the following resources:
 
 - **Microsoft R Server** - Highly scalable platform that extends the analytic capabilities of R.
@@ -38,14 +40,16 @@ Due to ADF dependencies on pre-loaded sample data and jar files (HDInsight activ
 Clone [this repository][LINK_GH] to a location on your machine. 
 
 ##### STEP 2
-Launch Windows PowerShell application and navigate to the **script/arm** folder of the repository.
+Launch Windows PowerShell application and navigate to the **Technical Deployment Guide\src\scripts\arm** folder of the repository.
  
 ##### STEP 3
 Connect to Azure, set what subscription to use and create a resource group to deploy your azure resources.   
 	
 ```Powershell
 Login-AzureRmAccount
+Get-AzureRmSubscription # Get a list of your subscriptions
 Select-AzureRmSubscription -SubscriptionId <subscription_id>
+$ResourceGroupName = <your_resource_group>
 New-AzureRmResourceGroup -Name $ResourceGroupName -Location <location_of_your_choice>  
 ```  
 
@@ -82,14 +86,16 @@ This is the storage for the entire solution.
 Deploy resources  
 Using the Powershell `New-AzureRmResourceGroupDeployment` cmdlet, deploy the following JSON templates in the following order:  
 	
-> NOTE: The deployment Cmdlet will ask you for some required parameters like ResourceGroupName, Useradmin and Password, ADF start and end times, Pattern Base Url, WebFarm and Website names (from the deployed Function App).  
+> NOTE: The deployment Cmdlet will ask you for some required parameters like username and password.  
 
-- **Deploy Resources**      
+###### Deploy Resources      
+This steps deploys a couple of resources, including an Azure HDInsight Cluster. Please ensure you have enough cores for this and note that deployment of a cluster takes up to 20mins. The `Verbose` flag shows the deployment progress.
+
 ```Powershell
-$templatePath = "deployresources.json"
-New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 1" -TemplateUri $templatePath 
+$templateFilePath = "deployresources.json"
+New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose 
 ```      
-    
+> **NOTE:** Uppercase characters are not allowed in HDInsight cluster username.
  
 ##### STEP 6
 Deploy an Azure Function App  
@@ -152,13 +158,18 @@ DeploymentDebugLogLevel :
 **MANUAL STEPS AFTER FUNCTION DEPLOY**  
 
 1. Copy over the contents of the **function** directory, i.e. **configure** folder into the Azure Functions Web App file system.
-    - Go to [Azure](https://portal.azure.com)
-    - Locate your resource group.
+    - Browse [Azure](https://portal.azure.com)
+    - Go to your resource group.
     - Click the newly created function app (**App Service**).
-    - Under Functions, click the **+** sign to create a new custom function.
-    - Select **HTTP trigger** function. Change language to C#, change the name to **configure** and set **Authorization level** to **Anonymous**. 
-    - Overwrite `run.csx`, `function.json` with the content on your local repo.
-    - Upload all the rest of the files under **configure** directory to the Function App.  
+    - Click Functions **>** + **>** Customer Function **>** HTTP Trigger 
+    	- Change the name to **configure**
+    	- Change language to C#
+    	- Set **Authorization level** to **Anonymous**.  
+    	- Click **Create**
+    - On the right hand side of the page, expand the **View Files** tab.
+    - Click on **Upload** to copy over the function assets. 
+        - Browse your local machine repository for **src/scripts/functions/configure**
+        - Select all the files and click **Open** to upload them to the Azure Function file system.  
 
 2. To activate the HTTP triggered function, send a HTTP POST request, using JSON input that conforms to the object found inside `input.csx` as shown below.  
 
@@ -173,33 +184,44 @@ public class Inputs {
       public string SqlHost { get; set; }
       public string SqlDatabase { get; set; }
 }
-```
-A sample JSON would look like this.  
+```  
 
-```json
-{
-    "PatternAssetBaseUrl": "https://ciqsdatastorage.blob.core.windows.net/customer-360",
-    "Username": "your username",
-    "Password": "your password",
-    "Storage": "your storage account name",
-    "StorageKey" : "your storage account key",
-    "HdiContainer": "your hdi container",
-    "SqlHost": "sql local host",
-    "SqlDatabase": "Customer360" 
+- Expand the **Test** tab.  
 
-}
-```
+- Select **HTTP** protocol with **POST** method
+- Fill out sample JSON below and paste it into **Request Body**. 
 
+    ```json
+    {
+        "PatternAssetBaseUrl": "https://ciqsdatastorage.blob.core.windows.net/customer-360",
+        "Username": "your username",
+        "Password": "your password",
+        "Storage": "your storage account name",
+        "StorageKey" : "your storage account key",
+        "HdiContainer": "your hdi container",
+        "SqlHost": "sql local host",
+        "SqlDatabase": "Customer360" 
+
+    }
+    ```
+- Click on **Save and Run** to trigger the function that configures the solution.  
+
+- Copy the following outputs from the successful HTTP response JSON:
+	- **adfStartTime** - Pipeline start time
+	- **adfEndTime** - Pipeline end time
+	- **outputCsvUrl** - Link to Csv for PowerBI vizualiations
 > NOTE: All these values are outputs of the previous ARM deployment steps.  
 
 ##### STEP 7
 Deploy the ADF pipelines
     
 - **Deploy ADF Pipelines**   
-    ```Powershell
-    $templatePath = "deploypipelines.json"
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name "Step 2" -TemplateUri $templatePath 
-    ```  
+```Powershell
+$templateFilePath = "deploypipelines.json"
+New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose 
+```  
+
+> NOTE: The deployment Cmdlet will ask you for some required parameters username, password, ADF start and end times (obtained from step above) and pattern base url (https://ciqsdatastorage.blob.core.windows.net/customer-360). These parameters must be the same as what was provided during resource creation.  
     
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
