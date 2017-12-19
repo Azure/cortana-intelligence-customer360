@@ -15,16 +15,13 @@
       }
     },
     "adf-start-time": {
-      "type": "string",
-      "defaultValue": "2017-05-25T20:00:00Z"
+      "type": "string"
     },
     "adf-end-time": {
-      "type": "string",
-      "defaultValue": "2017-05-26T22:00:00Z"
+      "type": "string"
     },
     "pattern-asset-base-url": {
-      "type": "string",
-      "defaultValue": "https://bostondata.blob.core.windows.net/retail-360",
+      "type": "string"
       "metadata": { "description": "Base URL of app build" }
     },
     "webFarmName": {
