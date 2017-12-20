@@ -1,3 +1,5 @@
+# Power BI Manual Install Steps  
+
 At this point you have a fully deployed and running solution. Congratulations! 
 
 
