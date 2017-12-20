@@ -209,7 +209,7 @@ public class Inputs {
 - Copy the following outputs from the successful HTTP response JSON:
 	- **adfStartTime** - Pipeline start time
 	- **adfEndTime** - Pipeline end time
-	- **outputCsvUrl** - Link to Csv for PowerBI vizualiations
+	- **outputCsvUrl** - Link to Csv for PowerBI visualizations
 > NOTE: All these values are outputs of the previous ARM deployment steps.  
 
 ##### STEP 7
