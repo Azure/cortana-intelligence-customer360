@@ -221,10 +221,14 @@ $templateFilePath = "deploypipelines.json"
 New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $templateFilePath -Verbose 
 ```  
 
-> NOTE: The deployment Cmdlet will ask you for some required parameters username, password, ADF start and end times (obtained from step above) and pattern base url (https://ciqsdatastorage.blob.core.windows.net/customer-360). These parameters must be the same as what was provided during resource creation.  
+> NOTE: The deployment Cmdlet will ask you for some required parameters username, password, ADF start and end times (obtained from step above). These parameters must be the same as what was provided during resource creation.  
     
+### Next steps
+Visualize the data using PowerBI. Find the post deployment steps for this [here][LINK_TO_PBI].  
+
+
  <!-- Links -->
 [LINK_PS]: https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-3.8.0
 [LINK_SCRIPTS]: https://github.com/Azure/cortana-intelligence-customer360/tree/master/Technical%20Deployment%20Guide/src/scripts
 [LINK_GH]: https://github.com/Azure/cortana-intelligence-customer360 
- 
+[LINK_TO_PBI]: https://github.com/Azure/cortana-intelligence-customer360/blob/master/Technical%20Deployment%20Guide/docs/pbi_steps.md
