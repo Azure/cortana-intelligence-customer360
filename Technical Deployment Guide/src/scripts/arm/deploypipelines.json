@@ -21,7 +21,8 @@
       "type": "string"
     },
     "pattern-asset-base-url": {
-      "type": "string"
+      "type": "string",
+	  "defaultValue": "https://ciqsdatastorage.blob.core.windows.net/customer-360",
       "metadata": { "description": "Base URL of app build" }
     },
     "webFarmName": {
