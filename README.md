@@ -1,3 +1,5 @@
+> **DISCLAIMER. Please note that this solution is no longer being supported. Feel free to use it, but do so at your own risk**.
+
 # Customer 360 using Machine Learning on Azure 
 The Customer 360 solution provides you a scalable way to build a customer profile enriched by machine learning. It also allows you to uniformly access and operate on data across disparate data sources (while minimizing raw data movement) and leverage the power of Microsoft R Server for scalable modelling and accurate predictions.
 
